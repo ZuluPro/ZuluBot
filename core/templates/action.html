@@ -1,0 +1,78 @@
+<div class="span3">
+ <input type="text" id="page_q" placeholder="Rechercher"/>
+ <select multiple size="17" id="search-pages">
+ </select>
+ <select id="search-pages-action">
+  <option>---</option>
+  <option value="add">Ajouter</option>
+  <option value="delete">Enlever</option>
+  <option value="delete-all">Tout enlever</option>
+  <option value="select-all">Tout sélectionner</option>
+ </select>
+</div>
+
+<div class="span3">
+ <select multiple size="20" id="pages">
+ </select>
+ <select id="pages-meta-action">
+  <option>---</option>
+  <option value="delete">Enlever</option>
+  <option value="delete-all">Tout enlever</option>
+  <option value="select-all">Tout sélectionner</option>
+ </select>
+</div>
+
+<div class="span7">
+ <div class="input-prepend">
+  <span class="add-on">Action</span>
+  <select id="pages-action">
+   <option>---</option>
+   <option value="add-category">Ajout de catégorie</option>
+   <option value="delete-category">Suppression de catégorie</option>
+   <option value="move-category">Déplacement catégorie</option>
+   <option value="sub">Subsitution de texte</option>
+   <option value="rename-pages">Renommage de page</option>
+  </select>
+ </div>
+
+ <div id="div-action-add-category" style="display: none;">
+  <div class="input-append">
+   <input type="text" id="category-to-add" placeholder="Catégorie à ajouter"/>
+   <button rel="category-to-add" class="btn btn-check-category">Vérifier</button>
+   <button id="btn-add-category" class="btn btn-primary">Ajouter</button>
+  </div>
+ </div>
+
+ <div id="div-action-sub" style="display: none;">
+  <div class="input-append">
+   <input type="text" id="sub-from" placeholder="Motif à remplacer"/>
+   <input type="text" id="sub-to" placeholder="Remplacer par"/>
+   <button class="btn btn-primary">Appliquer</button>
+  </div>
+ </div>
+ 
+ <div id="div-action-rename-pages" style="display: none;">
+  <div class="input-append">
+   <input type="text" id="rename-from" placeholder="Motif à remplacer"/>
+   <input type="text" id="rename-to" placeholder="Remplacer par"/>
+   <button id="btn-rename-pages" class="btn btn-primary">Appliquer</button>
+  </div>
+  <label class="checkbox">
+   <input id="rename-redirect" type="checkbox" name="redirect" value="on">
+   Ajouter une redirection à la place de l'ancienne page.
+  </label>
+ </div>
+
+ <div id="div-action-move-category" style="display: none;">
+  <div class="input-append">
+   <input type="text" id="category-move-from" placeholder="Ancienne catégorie"/>
+   <button rel="category-move-from" class="btn btn-check-category">Vérifier</button>
+  </div>
+  <div class="input-append">
+   <input type="text" id="category-move-to" placeholder="Nouvelle catégorie"/>
+   <button rel="category-move-to" class="btn btn-check-category">Vérifier</button>
+   <button id="btn-move-category" class="btn btn-primary">Déplacer</button>
+  </div>
+ </div>
+
+</div>
