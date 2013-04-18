@@ -1,5 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.conf import settings
+
+from djcelery.models import TaskMeta
+
+from core.tasks import async_move_pages, async_add_category, async_move_category
+from core.utils import make_messages
 from zulubot.handlers import wiki_handler
 w = wiki_handler()
 
@@ -26,9 +32,16 @@ def move_page(request):
     })
 
 def move_pages(request):
-    w.move_pages(request.POST.getlist('pages[]'), request.POST['from'], request.POST['to'], request.POST['redirect'])
-    messages.add_message(request, messages.INFO, 'Action en cours.',
+    pages = request.POST.getlist('pages[]')
+    if len(pages) > 3 and 'djcelery' in settings.INSTALLED_APPS :
+        async_move_pages.delay(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
+        messages.add_message(request, messages.INFO, 'Renommage en cours.',
                                  fail_silently=True)
+    else:
+        w.move_pages(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
+        messages.add_message(request, messages.INFO, u'Renommage des pages termin\xe9.',
+                                 fail_silently=True)
+
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
@@ -46,18 +59,34 @@ def check_page(request):
     })
     
 def add_category(request):
-    w.add_category(request.POST.getlist('pages[]'), request.POST['category'])
-    messages.add_message(request, messages.INFO, 'Action en cours.',
-                                 fail_silently=True)
+    pages = request.POST.getlist('pages[]')
+    if len(pages) > 3 and 'djcelery' in settings.INSTALLED_APPS :
+        async_add_category.delay(pages, request.POST['category'])
+        messages.add_message(request, messages.INFO, u'Ajout de cat\xe9gorie en cours.')
+    else:
+        results = w.add_category(pages, request.POST['category'])
+        msgs = make_messages(request, results)
+
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages':msgs,
     })
 
 def move_category(request):
-    w.move_category('from', request.POST['to'])
-    messages.add_message(request, messages.INFO, 'Action en cours.',
-                                 fail_silently=True)
+    if 'djcelery' in settings.INSTALLED_APPS :
+        async_move_category.delay('from', request.POST['to'])
+        messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie en cours.')
+    else:
+        w.move_category('from', request.POST['to'])
+        messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
 
+def get_finished_tasks(request):
+    tasks = {'error':[],'success':[]}
+    tasks['error'] = TaskMeta.objects.filter(status="ERROR")
+    tasks['succes'] = TaskMeta.objects.filter(status="SUCCESS")
+    return render(request, 'base/messages.html', {
+        'messages':messages.get_messages(request),
+    })
+    

@@ -79,7 +79,7 @@ $(document).on('click', '#btn-rename-pages', function() {
           success: function(data, status, xhr) {
               //$('#pages').empty();
               //$('#category-to-add').val('');
-              $('#div-action-move-pages').append(data);
+              $('#div-action-rename-pages').append(data);
           },
       });
     }
@@ -93,7 +93,7 @@ $(document).on('click', '#btn-add-category', function() {
           success: function(data, status, xhr) {
               //$('#pages').empty();
               //$('#category-to-add').val('');
-              $('#div-action-category').append(data);
+              $('#div-action-add-category').append(data);
           },
       });
     }

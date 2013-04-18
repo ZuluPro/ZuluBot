@@ -1,4 +1,5 @@
 from django.conf import settings
+from celery import task
 import wikipedia, catlib
 import re
 
@@ -114,15 +115,21 @@ class wiki_handler(object):
         # Format category arg
         category = self.get_category(category)
 
+        results = {'error':[],'success':[],'warning':[]}
         for p in pages :
             p = self.get_page(p)
             try :
                 old_text = p.get()
+
             # Do not touch redirect pages
-            except wikipedia.IsRedirectPage :
-                pass
+            except wikipedia.IsRedirectPage as e:
+                results['error'].append([p,e])
             else :
-                if not re.search((u'\[\[%s\]\]' % category.title()) , old_text) :
+                # Cat is already present
+                if re.search((u'\[\[%s\]\]' % category.title()) , old_text) :
+                    msg = u'"%s" d\xe9j\xe0 pr\xe9sente dans "%s".' % (category.title(), p.title())
+                    results['warning'].append([p,msg])
+                else:
                     s = re.search('\[\[Cat.gorie:[^\]]*\]\]', old_text)
                     if s :
                         new_text = old_text[:s.end()]+ (u'\n[[%s]]' % \
@@ -130,6 +137,9 @@ class wiki_handler(object):
                     else :
                         new_text = old_text+(u'\n[[%s]]' % category.title())
                     p.put(new_text, comment=(u'+[[%s]]' % category.title()))
+                    msg = u'"%s" ajout\xe9e \xe0 "%s".' % (category.title(), p.title())
+                    results['success'].append([p,msg])
+        return results 
 
     def delete_category(self, category):
         """
