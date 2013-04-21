@@ -127,13 +127,13 @@ LOGGING = {
 
 CELERY_IMPORTS = ('core.tasks',)
 import sys
-sys.path.append('/usr/local/lib/python2.7/dist-packages/pywikipedia')
 from settings_local import *
 
 import os
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 #STATIC_ROOT = os.path.join(BASEDIR, '../static')
 
+sys.path.append(WIKI['path'])
 STATICFILES_DIRS = (
     os.path.join(BASEDIR, '../static'),
 )

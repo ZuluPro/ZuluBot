@@ -55,7 +55,18 @@ $(document).on('click', '#btn-delete-pages', function() {
 /// ACTIONS FOR SELECTED PAGES
 // CHECK IF CATEGORY EXISTS
 $(document).on('click', '.btn-check-page', function() {
-cree
+  var target = $(this).parent().parent();
+  var pagename = $( '#'+$(this).attr('rel') ).val()
+  if ( $(this).hasClass('btn-check-category') ) {
+    pagename = 'Catégorie:'+pagename
+  }
+  if ( pagename.length ) {
+    $.ajax({url:'/check_page', data:{page:pagename}, async:true,
+      success: function(data, status, xhr) {
+        $(target).append(data);
+      },
+    });
+  }
 });
 
 // RENAME PAGES

@@ -18,12 +18,13 @@ DATABASES = {
     }
 }
 
-#INSTALLED_APPS = INSTALLED_APPS+('debug_toolbar','shell_plus')
-#INTERNAL_IPS = ('127.0.0.1',)
-#MIDDLEWARE_CLASSES = settings.MIDDLEWARE_CLASSES+('debug_toolbar.middleware.DebugToolbarMiddleware',)
+INSTALLED_APPS = INSTALLED_APPS+('debug_toolbar','shell_plus')
+INTERNAL_IPS = ('127.0.0.1','192.168.100.1')
+MIDDLEWARE_CLASSES = settings.MIDDLEWARE_CLASSES+('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
 WIKI = {
-    'language': 'fr',
-    'family': 'wikipedia',
-    'nick': 'YourNick'
+    'path': '/usr/lib/python2.7/dist-packages/pywikipedia',
+	'language': 'fr',
+	'family': 'wikipedia',
+	'nick': 'ZuluBot'
 }

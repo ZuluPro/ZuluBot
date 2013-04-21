@@ -2,10 +2,14 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 
-from djcelery.models import TaskMeta
+if 'djcelery' in settings.INSTALLED_APPS:
+	CELERY_IS_ACTIVE = True
+	from djcelery.models import TaskMeta
+	from core.tasks import async_move_pages, async_add_category, async_move_category, \
+			async_remove_category, async_add_internal_link, async_sub
+else:
+	CELERY_IS_ACTIVE = False
 
-from core.tasks import async_move_pages, async_add_category, async_move_category, \
-        async_remove_category, async_add_internal_link, async_sub
 from core.utils import make_messages, method_restricted_to, is_ajax
 from zulubot.handlers import wiki_handler
 w = wiki_handler()
@@ -14,6 +18,7 @@ w = wiki_handler()
 def index(request):
     return render(request, 'index.html', {
         'title':'ZuluBot',
+		'CELERY_IS_ACTIVE':CELERY_IS_ACTIVE
     })
 
 @is_ajax()
@@ -56,7 +61,7 @@ def move_pages(request):
     })
 
 @is_ajax()
-@method_restricted_to('POST')
+@method_restricted_to('GET')
 def check_page(request):
     p = w.get_page(request.GET['page'])
     if p.exists():

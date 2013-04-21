@@ -1,12 +1,11 @@
 from django.contrib import messages
-from djcelery.managers import ExtendedQuerySet
 
 def make_messages(request, results):
     """
     Create messages from wiki_handler's result.
     """
     # Format results arg
-    if not isinstance(results, (tuple,list,ExtendedQuerySet)) :
+    if not isinstance(results, (tuple,list)) :
         results = (results,)
 
     # Match resutlt type with messages.TAG
