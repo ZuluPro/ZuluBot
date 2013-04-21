@@ -11,7 +11,7 @@ else:
 	CELERY_IS_ACTIVE = False
 
 from core.utils import make_messages, method_restricted_to, is_ajax
-from zulubot.handlers import wiki_handler
+from core.handlers import wiki_handler
 w = wiki_handler()
 
 @method_restricted_to('GET')

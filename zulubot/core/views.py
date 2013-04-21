@@ -6,7 +6,7 @@ from djcelery.models import TaskMeta
 
 from core.tasks import async_move_pages, async_add_category, async_move_category
 from core.utils import make_messages
-from zulubot.handlers import wiki_handler
+from core.handlers import wiki_handler
 w = wiki_handler()
 
 def index(request):

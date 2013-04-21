@@ -1,6 +1,6 @@
 from django.utils import unittest
 from wikipedia import Page
-from zulubot.handlers import wiki_handler
+from core.handlers import wiki_handler
 w = wiki_handler()
 
 class get_page_TestCase(unittest.TestCase):

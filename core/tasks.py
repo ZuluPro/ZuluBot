@@ -1,5 +1,5 @@
 from celery.task import task
-from zulubot.handlers import wiki_handler
+from core.handlers import wiki_handler
 w = wiki_handler()
 
 @task(name='move_pages')
