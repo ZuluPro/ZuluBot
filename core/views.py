@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
@@ -48,7 +49,7 @@ def move_page(request):
 @method_restricted_to('POST')
 def move_pages(request):
     pages = request.POST.getlist('pages[]')
-    if len(pages) > 0 and 'djcelery' in settings.INSTALLED_APPS :
+    if len(pages) > 1 and CELERY_IS_ACTIVE :
         async_move_pages.delay(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
         messages.add_message(request, messages.INFO, 'Renommage en cours.')
         msgs = messages.get_messages(request)
@@ -76,7 +77,7 @@ def check_page(request):
 @method_restricted_to('POST')
 def add_category(request):
     pages = request.POST.getlist('pages[]')
-    if 'djcelery' in settings.INSTALLED_APPS :
+    if CELERY_IS_ACTIVE :
         async_add_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'Ajout de cat\xe9gorie en cours.')
         msgs = messages.get_messages(request)
@@ -91,7 +92,7 @@ def add_category(request):
 @is_ajax()
 @method_restricted_to('POST')
 def move_category(request):
-    if 'djcelery' in settings.INSTALLED_APPS :
+    if CELERY_IS_ACTIVE :
         async_move_category.delay(request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie en cours.')
     else:
@@ -105,7 +106,7 @@ def move_category(request):
 @method_restricted_to('POST')
 def remove_category(request):
     pages = request.POST.getlist('pages[]')
-    if 'djcelery' in settings.INSTALLED_APPS :
+    if CELERY_IS_ACTIVE :
         async_remove_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'Suppression de cat\xe9gorie en cours.')
         msgs = messages.get_messages(request)
@@ -122,7 +123,7 @@ def remove_category(request):
 @method_restricted_to('POST')
 def add_internal_link(request):
     pages = request.POST.getlist('pages[]')
-    if 'djcelery' in settings.INSTALLED_APPS :
+    if CELERY_IS_ACTIVE :
         async_add_internal_link.delay(pages, request.POST['link'], request.POST['link_text'])
         messages.add_message(request, messages.INFO, u"Ajout d'hyperliens en cours.")
     else:
@@ -137,7 +138,7 @@ def add_internal_link(request):
 @method_restricted_to('POST')
 def sub(request):
     pages = request.POST.getlist('pages[]')
-    if 'djcelery' in settings.INSTALLED_APPS :
+    if CELERY_IS_ACTIVE :
         async_sub.delay(pages, request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, u"Subtitution de texte en cours.")
     else:
@@ -151,6 +152,8 @@ def sub(request):
 @is_ajax()
 @method_restricted_to('GET')
 def get_finished_tasks(request):
+	if not CELERY_IS_ACTIVE:
+		raise Http404
     results = [ t.result  for t in TaskMeta.objects.all() ]
     [ t.delete()  for t in TaskMeta.objects.filter(status='SUCCESS') ]
     return render(request, 'base/messages.html', {
