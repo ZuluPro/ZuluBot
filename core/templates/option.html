@@ -1,3 +1,4 @@
+{% load unurlize %}
 {% for P in pages %}
-<option selected value="{{ P.urlname }}">{{ P.urlname }}</option>
+<option selected value="{{ P.urlname|unurlize }}">{{ P.urlname|unurlize }}</option>
 {% endfor %}

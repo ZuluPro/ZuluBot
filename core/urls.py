@@ -8,4 +8,6 @@ urlpatterns = patterns('',
     url(r'^move_pages$', 'core.views.move_pages', name='move pages'),
     url(r'^add_category$', 'core.views.add_category', name='add category'),
     url(r'^move_category$', 'core.views.move_category', name='move category'),
+
+    url(r'^get_finished_tasks$', 'core.views.get_finished_tasks', name='Finished tasks'),
 )

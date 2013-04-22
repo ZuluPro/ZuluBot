@@ -13,3 +13,7 @@ def async_add_category(*args, **kwargs):
 @task()
 def async_move_category(*args, **kwargs):
     return w.move_category(*args, **kwargs)
+
+@task()
+def test(i,j=1):
+    return i+j

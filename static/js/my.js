@@ -1,7 +1,8 @@
 // SEARCH PAGE
 $(document).on('keypress', '#page_q', function(e) {
     if (e.which == 13 && $(this).val().length ) {
-    $.ajax({url:'/search_page', data:{q:$(this).val()}, async:true,
+    $.ajax({url:'/search_page', async:true,
+        data:{q:$(this).val(), type:$('#search-type').val()},
         success: function(data, status, xhr) {
             $('#search-pages').html(data);
         },
@@ -118,3 +119,16 @@ $(document).on('click', '#btn-move-category', function() {
     }
 });
 
+// INFINITE LOOP FOR ASYNC TASKS
+window.onload = function start() {
+    get_finished_tasks();
+}
+function get_finished_tasks() {
+    window.setInterval(function () {
+      $.ajax({type:'GET', url:'/get_finished_tasks', async:true,
+          success: function(data, status, xhr) {
+              $('#action-msg-box').append(data);
+          },
+      });
+    }, 10000);
+}

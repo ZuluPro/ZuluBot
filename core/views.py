@@ -15,12 +15,14 @@ def index(request):
     })
 
 def search_page(request):
-    s1 = [ p for p in w.search_words(request.GET['q']) ]
-    s2 = w.search_in_title(request.GET['q'])
-    s = list(set(s1 + s2))
+    if request.GET.get('type','content') == 'content':
+        results = [ p for p in w.search_words(request.GET['q']) ]
+    else:
+        results = [ p for p in \
+            w.search_in_title(request.GET['q'], namespaces=request.GET.get('type',None)) ]
     
     return render(request, 'option.html', {
-        'pages':s,
+        'pages':results,
     })
 
 def move_page(request):
@@ -33,17 +35,16 @@ def move_page(request):
 
 def move_pages(request):
     pages = request.POST.getlist('pages[]')
-    if len(pages) > 3 and 'djcelery' in settings.INSTALLED_APPS :
+    if len(pages) > 0 and 'djcelery' in settings.INSTALLED_APPS :
         async_move_pages.delay(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
-        messages.add_message(request, messages.INFO, 'Renommage en cours.',
-                                 fail_silently=True)
+        messages.add_message(request, messages.INFO, 'Renommage en cours.')
+        msgs = messages.get_messages(request)
     else:
-        w.move_pages(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
-        messages.add_message(request, messages.INFO, u'Renommage des pages termin\xe9.',
-                                 fail_silently=True)
+        results = w.move_pages(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
+        msgs = make_messages(request, results)
 
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages':msgs,
     })
 
 def check_page(request):
@@ -63,6 +64,7 @@ def add_category(request):
     if len(pages) > 3 and 'djcelery' in settings.INSTALLED_APPS :
         async_add_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'Ajout de cat\xe9gorie en cours.')
+        msgs = messages.get_messages(request)
     else:
         results = w.add_category(pages, request.POST['category'])
         msgs = make_messages(request, results)
@@ -83,10 +85,9 @@ def move_category(request):
     })
 
 def get_finished_tasks(request):
-    tasks = {'error':[],'success':[]}
-    tasks['error'] = TaskMeta.objects.filter(status="ERROR")
-    tasks['succes'] = TaskMeta.objects.filter(status="SUCCESS")
+    results = [ t.result  for t in TaskMeta.objects.all() ]
+    [ t.delete()  for t in TaskMeta.objects.filter(status='SUCCESS') ]
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages':make_messages(request, results),
     })
     
