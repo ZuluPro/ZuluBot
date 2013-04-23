@@ -1,3 +1,9 @@
+// MESSAGES
+var print_message= function(msg,tag,into) {
+  var html = '<div id="msg-'+tag+'" class="alert alert-'+tag+'" style="display: block;"><p class="pull-right"><button class="close" onclick="$(this).parent().parent().hide(250)">×</button></p><div>'+msg+'</div></div>';
+  $(into).prepend(html);
+}
+
 // SEARCH PAGE
 $(document).on('keypress', '#page_q', function(e) {
     if (e.which == 13 && $(this).val().length ) {
@@ -172,7 +178,7 @@ $(document).on('click', '#btn-sub', function() {
 
 
 // INFINITE LOOP FOR ASYNC TASKS
-      if ( CELERY_IS_ACTIVE ) {
+if ( CELERY_IS_ACTIVE ) {
 window.onload = function start() {
     get_finished_tasks();
 }
@@ -197,4 +203,37 @@ $(document).on('keypress', '#contrib_q', function(e) {
         },
     });
     }
+});
+
+// SEARCH PAGE FOR EDITOR 
+$(document).on('keypress', '#editor_q', function(e) {
+    if (e.which == 13 && $(this).val().length ) {
+	var page = $(this).val()
+    $.ajax({url:'/get_page_text', async:true,
+        data:{q:page},
+        success: function(data, status, xhr) {
+            $('#editor-page').val(page);
+            $('#editor-text').val(data);
+			if (data == '') {
+			  print_message('Page vide.','warning','#editor-messages')
+			}
+        },
+    });
+    }
+});
+
+// PUT PAGE FOR EDITOR 
+$(document).on('click', '#btn-publish-editor', function() {
+  $.ajax({type:'POST', url:'/put_page_text', async:true,
+    data:{
+	  page:$('#editor-page').val(),
+      text:$('#editor-text').val(),
+      comment:$('#editor-comment').val(),
+      //minor:$('#editor-comment').val()
+      csrfmiddlewaretoken:csrf
+	},
+    success: function(data, status, xhr) {
+      $('#editor-messages').prepend(data);
+	}
+  });
 });

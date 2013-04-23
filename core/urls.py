@@ -12,6 +12,9 @@ urlpatterns = patterns('',
     url(r'^add_internal_link$', 'core.views.add_internal_link', name='add internal link'),
     url(r'^sub$', 'core.views.sub', name='sub'),
 
+    url(r'^get_page_text$', 'core.views.get_page_text', name='get page text'),
+    url(r'^put_page_text$', 'core.views.put_page_text', name='put page text'),
+
     url(r'^search_contrib$', 'core.views.search_contrib', name='search contribution'),
 
     url(r'^check_page$', 'core.views.check_page', name='check page'),

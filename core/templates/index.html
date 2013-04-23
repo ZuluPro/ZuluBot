@@ -13,12 +13,14 @@ var csrf = "{{ csrf_token }}";
   <ul class="nav nav-pills">
    <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
    <li><a href="#action" data-toggle="tab">Action</a></li>
+   <li><a href="#editor" data-toggle="tab">Editeur</a></li>
    <li><a href="#contrib" data-toggle="tab">Contributions</a></li>
   </ul>
 
  <div class="tab-content">
   <div class="tab-pane active" id="home">{% include 'home.html' %}</div>
   <div class="tab-pane" id="action">{% include 'action.html' %}</div>
+  <div class="tab-pane" id="editor">{% include 'editor/index.html' %}</div>
   <div class="tab-pane" id="contrib">{% include 'contrib/index.html' %}</div>
   <div class="tab-pane" id="settings">...</div>
  </div>

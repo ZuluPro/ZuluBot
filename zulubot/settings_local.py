@@ -18,13 +18,13 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS = INSTALLED_APPS+('debug_toolbar','shell_plus','djcelery')
+INSTALLED_APPS = INSTALLED_APPS+('debug_toolbar','shell_plus')#,'djcelery')
 INTERNAL_IPS = ('127.0.0.1','192.168.100.1')
 MIDDLEWARE_CLASSES = settings.MIDDLEWARE_CLASSES+('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
 WIKI = {
-    'path': '/home/amonthe/projects/pywikipedia-git/pywikipedia',
+    'path': '/usr/src/pywikipedia',
 	'language': 'fr',
-	'family': 'wiki-eno',
-	'nick': 'Anthony MONTHE'
+	'family': 'zuluwiki',
+	'nick': 'ZuluBot'
 }
