@@ -10,7 +10,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql' or 'oracle'.
-        'NAME': '/home/amonthe/zulubot.db',
+        'NAME': '/home/zulu/zulubot.db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -23,5 +23,5 @@ INTERNAL_IPS = ('127.0.0.1','192.168.100.1')
 MIDDLEWARE_CLASSES = settings.MIDDLEWARE_CLASSES+('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
 WIKI = {
-    'path': '/home/amonthe/projects/pywikipedia-git/pywikipedia',
+    'path': '/usr/src/pywikipedia',
 }

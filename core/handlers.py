@@ -5,6 +5,10 @@ import wikipedia, catlib, userlib, pagegenerators
 from datetime import datetime
 import re
 
+class NoActiveUser(Exception):
+	pass
+
+
 class wiki_handler(object):
     """
     Wiki handling, for make simply complex operations.

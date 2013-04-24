@@ -8,7 +8,10 @@ class Wiki_Active_User_Manager(models.Manager):
     Shorcuts Manager for handle active user.
     """
     def get_active(self):
-        return self.get_query_set().get(active=True)
+	try:
+            return self.get_query_set().get(active=True)
+        except Wiki_User.DoesNotExist as e:
+            raise Wiki_User.NoActiveUser
 
     def nick(self):
         return self.get_active().nick
@@ -42,6 +45,10 @@ class Wiki_User(models.Model):
     class Meta:
         app_label = 'core'
         ordering = ('active','nick')
+
+    class NoActiveUser(Exception):
+        """No active user found in database."""
+        pass
 
     def __unicode__(self):
         return self.nick
