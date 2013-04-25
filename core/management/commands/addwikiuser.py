@@ -22,10 +22,19 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        # Set Wiki_User attributes
-        for opt in 'nick','language','family','url':
-            if not options[opt]:
-                options[opt] = raw_input(opt.capitalize()+"> ")
+	# Set nick
+	if not options['url']:
+            options['nick'] = raw_input('Nick > ')
+	# Set family
+	if not options['family']:
+            options['family'] = raw_input('Family (default:wikipedia) > ') or 'wikipedia'
+	# Set language
+	if not options['language']:
+            options['language'] = raw_input('Language (default:en) > ') or 'en'
+	# Set index URL
+	if not options['url']:
+            options['url'] = raw_input('Index URL > ')
+
 	# Set active or not
 	if options['active'] is None:
             if raw_input('active [Y/n]') != 'n':
@@ -70,7 +79,7 @@ class Command(BaseCommand):
                 status_code = system('python login.py')
 
             U.save()
-	    logger.info(u"Create user '%s'" % U.nick)
+	    logger.info(u"Create user '%s' in Db" % U.nick)
 	except ValidationError as e:
 	    logger.error(e.message)
 
