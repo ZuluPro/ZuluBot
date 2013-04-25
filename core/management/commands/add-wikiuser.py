@@ -4,10 +4,14 @@ from django.conf import settings
 
 from core.models import Wiki_User
 
+import wikipedia
+from login import LoginManager
+import config
+
 from optparse import make_option
+from getpass import getpass
 from os import symlink, mkdir, chdir, system
-from logging import getLogger
-logger = getLogger()
+import logging
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
@@ -23,7 +27,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 	# Set nick
-	if not options['url']:
+	if not options['nick']:
             options['nick'] = raw_input('Nick > ')
 	# Set family
 	if not options['family']:
@@ -51,18 +55,21 @@ class Command(BaseCommand):
 
         try:
             U.full_clean() # Test to validate fields
+	except ValidationError as e:
+	    logging.error('Bad value(s) given for fields.')
+        else:
             # Create bot dir
             bot_path = settings.BASEDIR+'/bots-config/'+U.nick+'/'
             mkdir(bot_path)
-	    logger.info(u"Create folder '%s'" % bot_path)
+	    logging.info(u"Create folder '%s'" % bot_path)
             # Create families symlink from pwikipedia dir
 	    families_symlink = settings.WIKI['path']+'/families'
             symlink(families_symlink, bot_path+'families')
-	    logger.info(u"Create file '%s'" % families_symlink)
+	    logging.info(u"Create file '%s'" % families_symlink)
             # Create families symlink from pwikipedia dir
 	    userinterfaces_symlink = settings.WIKI['path']+'/userinterfaces'
             symlink(userinterfaces_symlink, bot_path+'userinterfaces')
-	    logger.info(u"Create file '%s'" % userinterfaces_symlink)
+	    logging.info(u"Create file '%s'" % userinterfaces_symlink)
             
 	    # append to  user-config.py in pywikipedia dir
             if options['create_user_config']:
@@ -70,16 +77,50 @@ class Command(BaseCommand):
                     f.write("""family = '{0}'
                     mylang = '{1}'
                     usernames['{0}']['{1}'] = u'{2}' """.format(U.family,U.language,U.nick))
-	        logger.info(u"Append to file '%s'" % bot_path+'user-config.py')
+	        logging.info(u"Append to file '%s'" % bot_path+'user-config.py')
 
             # Launch pywikipedia's login.py
             if U.active:
-	        logger.info(u"User is set as active, trying to login")
-                chdir(settings.WIKI['path'])
-                status_code = system('python login.py')
+	        L = LoginManager()
+	        logging.info(u"User is set as active, trying to login")
+		# Find if password file has been configured
+		if not config.password_file:
+                    logging.warning("Password file has not been configured. \
+                      If you want automatic login please set it in '%s/config.py'." % \
+                      settings.WIKI['path'])
+                else:
+                    # Try to see if user is in passwd file
+		    user_found = False
+		    passwd_file = wikipedia.config.datafilepath(config.password_file)
+                    try:
+                        with open(passwd_file, 'r') as f:
+                            for line in f.readlines():
+                                if not line.strip(): continue
+                                entry = eval(line)
+                                if len(entry) == 2:
+                                    if entry[0] == U.nick: user_found = True
+                                elif len(entry) == 4:
+                                    if entry[2] == U.nick: user_found = True
+		        if not user_found:
+		            # Purpose to create it
+		            logging.info(u"User '%s' hasn't a passwd row in '%s'.") 
+                            if raw_input('Do you want to appent it ? [Y/n] ') != 'n':
+                                with open(passwd_file, 'a') as f:
+                                    password = getpass('Password > ')
+                                    line = str( (U.language,U.family,U.nick,password) )
+                                    f.write(line)
+		    except IOError as e:
+		        # Except files not exists and purpose to create
+		        logging.warning("File '%s' does not exist" % passwd_file)
+			if raw_input('Do you want to create it ? [Y/n] ') != 'n':
+                            with open(passwd_file, 'w') as f:
+                                password = getpass('Password > ')
+                                line = str( (U.language,U.family,U.nick,password) )
+                                f.write(line)
 
+                # Launch login script
+                L.readPassword()
+                is_logged = L.login()
+			    
             U.save()
-	    logger.info(u"Create user '%s' in Db" % U.nick)
-	except ValidationError as e:
-	    logger.error(e.message)
-
+	    logging.info(u"Create user '%s' in Db" % U.nick)

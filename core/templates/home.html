@@ -1,5 +1,5 @@
-{% if User.id %}
- <h3>{{ w..nick }} sur <a href="{{ w.site.siteinfo.base }}">{{ w.site.siteinfo.sitename }}</a></h3>
+{% if w.dbuser.id %}
+ <h3>{{ w.nick }} sur <a href="{{ w.site.siteinfo.base }}">{{ w.site.siteinfo.sitename }}</a></h3>
 {% else %}
  <h3>Aucun utilisateur configuré</h3>
 {% endif %}

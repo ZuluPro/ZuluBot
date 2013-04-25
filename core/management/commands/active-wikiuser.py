@@ -1,32 +1,27 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.core.exceptions import ValidationError
-from django.conf import settings
-
 from core.models import Wiki_User
-
 from optparse import make_option
-from os import remove, rmdir
-from logging import getLogger
-logger = getLogger()
+import logging
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('-n', '--nick', action='store', default=False, help="Find user's nick"),
         make_option('-f', '--family', action='store', default=False, help="Find user's family"),
         make_option('-l', '--language', action='store', default=False, help="Find user's language"),
-        make_option('-D', '--delete-user-config', action='store', default=False, help="Delete user configuration files")
-    #    make_option('-F', '--create-family-file', action='store', default=True, help="Create family file")
     )
 
     def handle(self, *args, **options):
         Us = Wiki_User.objects.all()
+	# Stop if there's no user in Db
 	if Us.count() == 0:
             print "There's no user in database."
             return
 
+	# If there's only 1 user, choose it
 	if Us.count() == 1:
             pass
 
+        # Search user by args or asking
         else:
 	    if not options['nick']:
                 nick_list = [ U.nick for U in Us ]
@@ -63,35 +58,14 @@ class Command(BaseCommand):
 
         U = Us.get() 
 
-        if raw_input("Do you really want to delete '%s' ? [N/y] " % Us.get()) != 'y' :
-            logger.info('Aborted !')
+	if user.active():
+            logging.info("'%s' is already active." % U.name)
             return
 
-        bot_path = settings.BASEDIR+'/bots-config/'+U.nick+'/'
-        try:
-            # Delete families symlink from pwikipedia dir
-	    families_symlink = settings.WIKI['path']+'/families'
-            remove(bot_path+'families')
-	    logger.info(u"Remove file '%s'" % families_symlink)
-	except (OSError,IOError):
-            logger.warning(u"No file to delete : '%s'" % families_symlink)
+        if raw_input("Do you really want to active '%s' ? [Y/n] " % Us.get()) == 'n' :
+            logging.info('Aborted !')
+            return
 
-        try:
-            # Delete families symlink from pwikipedia dir
-	    userinterfaces_symlink = settings.WIKI['path']+'/userinterfaces'
-            remove(bot_path+'userinterfaces')
-	    logger.info(u"Remove file '%s'" % userinterfaces_symlink)
-	except (OSError,IOError):
-            logger.warning(u"No file to delete : '%s'" % userinterfaces_symlink)
-
-        try:
-            # Delete bot dir
-            rmdir(bot_path)
-	    logger.info(u"Delete folder '%s'" % bot_path)
-	except (OSError,IOError):
-            logger.warning(u"No file to delete : '%s'" % bot_path)
-        
-        U.delete()
-	logger.info(u"Delete user '%s' in Db" % U.nick)
-	logger.info(u"You can delete manually your credentials in '%s'." % settings.WIKI['path'])
+        U.set_active()
+	logging.info(u"Set user '%s' active" % U.nick)
 
