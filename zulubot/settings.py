@@ -138,3 +138,4 @@ STATICFILES_DIRS = (
     os.path.join(BASEDIR, '../static'),
 )
 
+import settings_validation

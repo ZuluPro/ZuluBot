@@ -5,9 +5,6 @@ import wikipedia, catlib, userlib, pagegenerators
 from datetime import datetime
 import re
 
-class NoActiveUser(Exception):
-	pass
-
 
 class wiki_handler(object):
     """
@@ -48,6 +45,7 @@ class wiki_handler(object):
         Get pages which title matching with given key.
         This key is a case insensitive regex.
         """
+		# Not usable in big wiki
         regex = re.compile(key, re.I)
 
         pages = self.get_all(namespaces)
