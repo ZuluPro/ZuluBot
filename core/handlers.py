@@ -403,6 +403,10 @@ class wiki_handler(object):
             yield (wpage,id,datetime.strptime(str(date),'%Y%m%d%H%M%S'),comment)
 
     def get_wiki_url(self, page, link=None):
+        """
+        Get link into mediawiki for a page.
+        If link is True, return a HTML <a>.
+        """
         w = wiki_handler()
         full_url = w.dbuser.url+page.urlname()
         if not link:
@@ -410,3 +414,19 @@ class wiki_handler(object):
         else:
             html = ' <a href="%s"><i class="icon-check"></i></a>' % full_url
             return html
+
+    def get_pages_wiki_url(self, pages, link=None):
+        """
+        Return mediawiki links for list of pages.
+        Returned as Task_Result.
+        """
+        # Format pages arg
+        if not isinstance(pages, (tuple,list)) :
+            pages = (pages,)
+
+        results = Task_Result()
+        for p in pages:
+            p = self.get_page(p)
+            msg = u'<a href="{0}">{1}</a>'.format(self.get_wiki_url(p,link), p.title())
+            results.add_result('info',msg)
+        return results

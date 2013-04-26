@@ -144,6 +144,18 @@ def sub(request):
 
 @is_ajax()
 @method_restricted_to('GET')
+def get_page_links(request):
+    w = wiki_handler()
+    page_names = request.GET.getlist('pages[]')
+    results = w.get_pages_wiki_url(page_names)
+    msgs = results.make_messages(request, header='Hyperliens:')
+
+    return render(request, 'base/messages.html', {
+        'messages':msgs,
+    })
+
+@is_ajax()
+@method_restricted_to('GET')
 def get_finished_tasks(request):
     if not CELERY_IS_ACTIVE:
         raise Http404

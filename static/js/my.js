@@ -21,6 +21,17 @@ $(document).on('keypress', '#page_q', function(e) {
     }
 });
 
+// GET PAGES LINKS
+var get_page_links = function(pages,into) {
+    $.ajax({url:'/get_page_links', async:true,
+      data:{pages:pages},
+      success: function(data, status, xhr) {
+        $(into).append(data);
+	  },
+    })
+}
+
+
 // CHOOSE AN ACTION FOR SEARCHED PAGES
 $(document).on('change', '#search-pages-action', function() {
     if ( $(this).val() == 'add' ) {
@@ -33,6 +44,9 @@ $(document).on('change', '#search-pages-action', function() {
         $('#search-pages option').prop('selected', true);
     } else if ( $(this).val() == 'unselect-all' ) {
         $('#search-pages option').prop('selected', false);
+    } else if ( $(this).val() == 'get-page-links' ) {
+        var pages = $('#search-pages').val(); 
+        get_page_links(pages, '#action-msg-box');
     }
     $(this).val('---');
 });
@@ -41,7 +55,7 @@ $(document).on('dbclick', '#search-pages', function() {
     $('#search-pages').children(':selected').appendTo('#pages');
 });
 
-// CHOOSE A META-ACTION FOR PAGES
+// CHOOSE A META-ACTION FOR SELECTED PAGES
 $(document).on('change', '#pages-meta-action', function() {
     if ( $(this).val() == 'delete' ) {
         $('#pages option:selected').remove();
@@ -49,6 +63,9 @@ $(document).on('change', '#pages-meta-action', function() {
         $('#pages option').remove();
     } else if ( $(this).val() == 'select-all' ) {
         $('#pages option').prop('selected', true);
+    } else if ( $(this).val() == 'get-page-links' ) {
+        var pages = $('#pages').val(); 
+        get_page_links(pages, '#action-msg-box');
     }
     $(this).val('---');
 });
@@ -68,18 +85,18 @@ $(document).on('click', '#btn-delete-pages', function() {
 /// ACTIONS FOR SELECTED PAGES
 // CHECK IF CATEGORY EXISTS
 $(document).on('click', '.btn-check-page', function() {
-  var target = $(this).parent().parent();
-  var pagename = $( '#'+$(this).attr('rel') ).val()
-  if ( $(this).hasClass('btn-check-category') ) {
-    pagename = 'Catégorie:'+pagename
-  }
-  if ( pagename.length ) {
-    $.ajax({url:'/check_page', data:{page:pagename}, async:true,
-      success: function(data, status, xhr) {
-        $(target).append(data);
-      },
-    });
-  }
+    var target = $(this).parent().parent();
+    var pagename = $( '#'+$(this).attr('rel') ).val()
+    if ( $(this).hasClass('btn-check-category') ) {
+      pagename = 'Catégorie:'+pagename
+    }
+    if ( pagename.length ) {
+      $.ajax({url:'/check_page', data:{page:pagename}, async:true,
+        success: function(data, status, xhr) {
+          $(target).append(data);
+        },
+      });
+    }
 });
 
 // RENAME PAGES
@@ -186,10 +203,10 @@ $(document).on('click', '#btn-sub', function() {
 
 // INFINITE LOOP FOR ASYNC TASKS
 if ( CELERY_IS_ACTIVE ) {
-window.onload = function start() {
-    get_finished_tasks();
+    window.onload = function start() {
+      get_finished_tasks();
+    }
 }
-      }
 function get_finished_tasks() {
     window.setInterval(function () {
         $.ajax({type:'GET', url:'/get_finished_tasks', async:true,

@@ -24,7 +24,7 @@ class Task_Result(dict):
         """
         self[status].append(msg)
 
-    def htmlize(self,status):
+    def htmlize(self,status,header=''):
         """
         Convert results into one string.
         HTML is an unstyled unordered list like below:
@@ -33,20 +33,23 @@ class Task_Result(dict):
          <li>Result #2</li>
         </ul>
         """
-        self.pre_messages[status] = '<ul class="unstyled">'
+        self.pre_messages[status] = ''
+        if header:
+            self.pre_messages[status] += ('<p><b>%s</b></p>' % header)
+        self.pre_messages[status] += '<ul class="unstyled">'
         for result in self[status]:
             self.pre_messages[status] += ('<li>%s</li>' % result )
         self.pre_messages[status] += '</ul>'
         return self.pre_messages[status]
 
-    def make_messages(self, request):
+    def make_messages(self, request, header=''):
         """
         Create messages from result and return them.
         """
         # Set dict of string which will contain HTML
         for status in self.TAGS:
             if self[status] :
-                self.htmlize(status)
+                self.htmlize(status, header)
                 # Create messages with HTML results
                 messages.add_message(request, self.TAGS[status], self.pre_messages[status])
         return messages.get_messages(request)
