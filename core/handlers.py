@@ -43,15 +43,12 @@ class wiki_handler(object):
     def search_in_title(self, key, namespaces=None):
         """
         Get pages which title matching with given key.
-        This key is a case insensitive regex.
         """
 		# Not usable in big wiki
-        regex = re.compile(key, re.I)
-
-        pages = self.get_all(namespaces)
+        # regex = re.compile(key, re.I)
+        pages = self.site.search(key, 50, namespaces)
         for page in pages :
-            if regex.search(page.titleWithoutNamespace()):
-                yield page
+            yield page[0]
 
     def get_page(self, page):
         """
