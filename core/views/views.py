@@ -24,6 +24,15 @@ def index(request):
     })
 
 @is_ajax()
+@method_restricted_to('POST')
+def get_page_links(request):
+    page_names = request.POST.getlist('pages[]')
+
+    return render(request, 'base/messages.html', {
+        'messages':msgs,
+    })
+
+@is_ajax()
 @method_restricted_to('GET')
 def search_contrib(request):
     w = wiki_handler()

@@ -64,6 +64,8 @@ class wiki_handler(object):
         """
         Delete a category.
         """
+        # TODO
+        #  To improve a lot and add in MVC
         self.get_page(page).delete(
             reason='-Suppression',
             prompt=False,
@@ -113,10 +115,16 @@ class wiki_handler(object):
         for p in pages:
             try:
                 old_page = self.get_page(p)
+                old_html_link = self.get_wiki_url(old_page,True)
                 new_page = self.get_page(re.sub(pat,rep,p.title()))
+                new_html_link = self.get_wiki_url(new_page,True)
                 if old_page != new_page :
                     self.move_page(old_page, new_page, redirect)
-                    msg = SUCCESS % (old_page.title(), new_page.title())
+                    # Format success message
+                    msg = (SUCCESS % (
+                        old_page.title() + old_html_link,
+                        new_page.title() + new_html_link
+                    ))
                     results.add_result('success',msg)
                 else:
                     msg = WARNING % old_page.title()
@@ -140,10 +148,13 @@ class wiki_handler(object):
             category = catlib.Category(self.site, category.title())
         return category
 
-    def add_category(self, pages, category):
+    def add_category(self, pages, category, results=None):
         """
         Add a category to a list of page's name.
         Work if pages list is a single pagename.
+        
+        A Task_result object can be give this method
+        for follow several task.
         """
         # Format pages arg
         if not isinstance(pages, (tuple,list)) :
@@ -153,12 +164,12 @@ class wiki_handler(object):
         # Format category arg
         category = self.get_category(category)
 
-        results = Task_Result()
+        results = results or Task_Result()
         SUCCESS = u'"%s" ajout\xe9e \xe0 "%s".'
         WARNING = u'"%s" d\xe9j\xe0 pr\xe9sente dans "%s".'
         for p in pages :
             p = self.get_page(p)
-            html_link = self.get_full_url(p,True)
+            html_link = self.get_wiki_url(p,True)
             try :
                 old_text = p.get()
             # Do not touch redirect pages
@@ -182,26 +193,31 @@ class wiki_handler(object):
                     results.add_result('success',msg)
         return results 
 
-    def delete_category(self, category):
+    def delete_category(self, category, results=None):
         """
         Delete a category.
         """
         # TODO
         # Exception : Page already deleted
-        results = Task_Result()
-        self.get_category(category).delete(
+        results = results or Task_Result()
+        category = self.get_category(category)
+        category.delete(
             reason='-Suppression',
             prompt=False,
             mark=True
         )
-        msg = u'Cat\xe9gorie "%s" supprim\xe9e.' % (category.title(), p.title())
+        html_link = self.get_wiki_url(category,True)
+        msg = u'Cat\xe9gorie "%s" supprim\xe9e. %s' % (category.title(), html_link)
         results.add_result('success',msg)
         return results 
 
-    def remove_category(self, pages, category):
+    def remove_category(self, pages, category, results=None):
         """
         Remove a category to a list of page's name.
         Work if pages list is a single pagename.
+        
+        A Task_result object can be give this method
+        for follow several task.
         """
         # TODO
         # Compile regex
@@ -213,19 +229,20 @@ class wiki_handler(object):
         # Format category arg
         category = self.get_category(category)
 
-        results = Task_Result()
+        results = results or Task_Result()
         SUCCESS = u'"%s" supprim\xe9e de "%s".'
         WARNING = u'"%s" non trouv\xe9e dans "%s".'
         for p in pages :
             p = self.get_page(p)
+            html_link = self.get_wiki_url(p,True)
             old_text = p.get()
             if re.search((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), old_text):
                 new_text = re.sub((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), '', old_text)
                 p.put(new_text, comment=(u'-[[%s]]' % category.title()))
-                msg = SUCCESS % (category.title(), p.title())
+                msg = SUCCESS % (category.title(), p.title()+html_link)
                 results.add_result('success',msg)
             else:
-                msg = WARNING % (category.title(), p.title())
+                msg = WARNING % (category.title(), p.title()+html_link)
                 results.add_result('warning',msg)
         return results 
 
@@ -239,18 +256,22 @@ class wiki_handler(object):
         # Add lire cases
         old_cat = self.get_category(old)
         new_cat = self.get_category(new)
-        pages = old_cat.articlesList()
-        self.remove_category([ p.title() for p in pages ], old_cat.title()) 
-        self.add_category([ p.title() for p in pages ], new_cat.title()) 
-
         results = Task_Result()
+
+		# Use self method to remove and add categories
+        pages = old_cat.articlesList()
+        results = self.remove_category([ p.title() for p in pages ], old_cat.title(), results)
+        results = self.add_category([ p.title() for p in pages ], new_cat.title(), results)
+
+        # Move 
         if not new_cat.exists() and old_cat.exists() :
             new_cat.put(
                 newtext=old_cat.get(),
                 comment=u'D\xe9placement de %s vers %s' % (old_cat.title(),new_cat.title()),
                 minorEdit=False,
             )
-            msg = u'D\xe9placement de %s vers %s termin\xe9.' % (old_cat.title(),new_cat.title())
+            msg = u'D\xe9placement de %s vers %s termin\xe9.' % \
+                (old_cat.title(), new_cat.title()+html_link)
             results.add_result('success',msg)
             self.delete_category(old_cat.title())
         return results
@@ -317,6 +338,7 @@ class wiki_handler(object):
         SUCCESS = u'Hyperlien(s) "%s" ajout\xe9(s) sur "%s".'
         WARNING = u'Aucun hyperlien "%s" ajout\xe9(s) sur "%s".'
         for page in pages:
+            html_link = self.get_wiki_url(page,True)
             page = self.get_page(page)
             old_text = page.get()
             # Walk in text with the key ofr step
@@ -355,7 +377,7 @@ class wiki_handler(object):
                 msg = SUCCESS % (link, page.title())
                 results.add_result('success',msg)
             else:
-                msg = WARNING % (link, page.title())
+                msg = WARNING % (link, page.title()+results)
                 results.add_result('warning',msg)
             return results
 
@@ -380,7 +402,7 @@ class wiki_handler(object):
                 continue
             yield (wpage,id,datetime.strptime(str(date),'%Y%m%d%H%M%S'),comment)
 
-    def get_full_url(self, page, link=None):
+    def get_wiki_url(self, page, link=None):
         w = wiki_handler()
         full_url = w.dbuser.url+page.urlname()
         if not link:

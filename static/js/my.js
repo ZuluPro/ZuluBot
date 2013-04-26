@@ -31,6 +31,8 @@ $(document).on('change', '#search-pages-action', function() {
         $('#search-pages option').remove();
     } else if ( $(this).val() == 'select-all' ) {
         $('#search-pages option').prop('selected', true);
+    } else if ( $(this).val() == 'unselect-all' ) {
+        $('#search-pages option').prop('selected', false);
     }
     $(this).val('---');
 });
