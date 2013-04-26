@@ -158,6 +158,7 @@ class wiki_handler(object):
         WARNING = u'"%s" d\xe9j\xe0 pr\xe9sente dans "%s".'
         for p in pages :
             p = self.get_page(p)
+            html_link = self.get_full_url(p,True)
             try :
                 old_text = p.get()
             # Do not touch redirect pages
@@ -166,7 +167,7 @@ class wiki_handler(object):
             else :
                 # Cat is already present
                 if re.search((u'\[\[%s\]\]' % category.title()) , old_text) :
-                    msg = WARNING % (category.title(), p.title())
+                    msg = (WARNING % (category.title(), p.title())) + html_link
                     results.add_result('warning', msg)
                 else:
                     # Search if a category zone is present
@@ -177,7 +178,7 @@ class wiki_handler(object):
                     else :
                         new_text = old_text+(u'\n[[%s]]' % category.title())
                     p.put(new_text, comment=(u'+[[%s]]' % category.title()))
-                    msg = SUCCESS % (category.title(), p.title())
+                    msg = SUCCESS % (category.title(), p.title()) + html_link
                     results.add_result('success',msg)
         return results 
 
@@ -378,3 +379,12 @@ class wiki_handler(object):
             if i < start or i > end :
                 continue
             yield (wpage,id,datetime.strptime(str(date),'%Y%m%d%H%M%S'),comment)
+
+    def get_full_url(self, page, link=None):
+        w = wiki_handler()
+        full_url = w.dbuser.url+page.urlname()
+        if not link:
+		    return full_url
+        else:
+            html = ' <a href="%s"><i class="icon-check"></i></a>' % full_url
+            return html
