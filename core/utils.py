@@ -13,10 +13,8 @@ def make_messages(request, results):
     TAGS = dict([ (j,i) for i,j in messages.DEFAULT_TAGS.items() ])
 
     grouped_results = {'success':'','warning':'','error':''}
-    print results
     for task_r in results:
         for s in ('success','warning','error'):
-            print task_r
             for p,r in task_r[s]:
                 if r :
                     grouped_results[s] += ('<li>%s</li>' % r )

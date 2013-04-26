@@ -196,7 +196,7 @@ class wiki_handler(object):
         # Format category arg
         category = self.get_category(category)
 
-        SUCCESS = u'Cat\xe9gorie "%s" supprim\xe9e.'
+        SUCCESS = u'Cat\xe9gorie "%s" supprim\xe9e de "%s".'
         results = {'error':[],'success':[],'warning':[]}
         for p in pages :
             p = self.get_page(p)
@@ -227,3 +227,10 @@ class wiki_handler(object):
             )
         self.delete_category(old_cat.title())
 
+    def add_internal_link(self, page, key, link=''):
+        page = self.get_page(page)
+        page_text = page.get()
+        for i,match in enumerate(re.finditer(key,page_text)):
+            if not i % 5 :
+                pass
+        

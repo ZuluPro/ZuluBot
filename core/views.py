@@ -75,14 +75,30 @@ def add_category(request):
 
 def move_category(request):
     if 'djcelery' in settings.INSTALLED_APPS :
-        async_move_category.delay('from', request.POST['to'])
+        async_move_category.delay(request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie en cours.')
     else:
-        w.move_category('from', request.POST['to'])
+        w.move_category(request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
+
+def remove_catgory(request):
+    pages = request.POST.getlist('pages[]')
+    if 'djcelery' in settings.INSTALLED_APPS :
+        async_remove_category_from.delay(pages, request.POST['category'])
+        messages.add_message(request, messages.INFO, u'Suppression de cat\xe9gorie en cours.')
+        msgs = messages.get_messages(request)
+    else:
+        w.remove_category_from(pages, request.POST['category'])
+        messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
+        msgs = make_messages(request, results)
+
+    return render(request, 'base/messages.html', {
+        'messages':messages.get_messages(request),
+    })
+
 
 def get_finished_tasks(request):
     results = [ t.result  for t in TaskMeta.objects.all() ]
