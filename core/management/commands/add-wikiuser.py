@@ -1,8 +1,10 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.template import Context, loader
 
 from core.models import Wiki_User
+from core.validators import validate_family
 
 import wikipedia
 from login import LoginManager
@@ -11,6 +13,7 @@ import config
 from optparse import make_option
 from getpass import getpass
 from os import symlink, mkdir, chdir, system
+import re
 import logging
 
 class Command(BaseCommand):
@@ -53,31 +56,45 @@ class Command(BaseCommand):
 	  active=options['active'] or False
         )
 
+        # Try to validate family
+	try:
+	    validate_family(options['family'])
+	except ValidationError:
+	    family_file = config.datafilepath('families')+('/%s_family') % options['family']
+	    logging.error("Your family file '%s' doesn't exist." % family_file)
+	    if raw_input('Do you want to create family file ? [Y/n] ') != 'n':
+	        with open(family_file, 'w') as outfile:
+	           t = loader.get_template('family.py')
+		   c = Context({
+                     'opts':options,
+		     'scriptpath':raw_input("scriptpath (default:'/wiki/') >") or '/wiki/',
+                   }) 
+		   outfile.write(t.render(context))
+	           logging.info("Create family file '%s'." % family_file)
+
+        # Try to validate user in DB
         try:
             U.full_clean() # Test to validate fields
 	except ValidationError as e:
 	    logging.error('Bad value(s) given for fields.')
         else:
-            # Create bot dir
-            bot_path = settings.BASEDIR+'/bots-config/'+U.nick+'/'
-            mkdir(bot_path)
-	    logging.info(u"Create folder '%s'" % bot_path)
-            # Create families symlink from pwikipedia dir
-	    families_symlink = settings.WIKI['path']+'/families'
-            symlink(families_symlink, bot_path+'families')
-	    logging.info(u"Create file '%s'" % families_symlink)
-            # Create families symlink from pwikipedia dir
-	    userinterfaces_symlink = settings.WIKI['path']+'/userinterfaces'
-            symlink(userinterfaces_symlink, bot_path+'userinterfaces')
-	    logging.info(u"Create file '%s'" % userinterfaces_symlink)
+            try:
+                # Create bot dir
+                bot_path = settings.BASEDIR+'/bots-config/'+U.nick+'/'
+                mkdir(bot_path)
+	        logging.info(u"Create folder '%s'" % bot_path)
+	    except OSError as e:
+	        logging.info('Bots config file already exists')
+            else:
+                # Create families symlink from pwikipedia dir
+	        families_symlink = settings.WIKI['path']+'/families'
+                symlink(families_symlink, bot_path+'families')
+	        logging.info(u"Create file '%s'" % families_symlink)
+                # Create families symlink from pwikipedia dir
+	        userinterfaces_symlink = settings.WIKI['path']+'/userinterfaces'
+                symlink(userinterfaces_symlink, bot_path+'userinterfaces')
+	        logging.info(u"Create file '%s'" % userinterfaces_symlink)
             
-	    # append to  user-config.py in pywikipedia dir
-            if options['create_user_config']:
-	        with open(bot_path+'user-config.py', 'a') as f:
-                    f.write("""family = '{0}'
-                    mylang = '{1}'
-                    usernames['{0}']['{1}'] = u'{2}' """.format(U.family,U.language,U.nick))
-	        logging.info(u"Append to file '%s'" % bot_path+'user-config.py')
 
             # Launch pywikipedia's login.py
             if U.active:
@@ -94,16 +111,20 @@ class Command(BaseCommand):
 		    passwd_file = wikipedia.config.datafilepath(config.password_file)
                     try:
                         with open(passwd_file, 'r') as f:
+                            # Search user by syntax: tuple of 2 or 4
                             for line in f.readlines():
                                 if not line.strip(): continue
                                 entry = eval(line)
                                 if len(entry) == 2:
                                     if entry[0] == U.nick: user_found = True
                                 elif len(entry) == 4:
-                                    if entry[2] == U.nick: user_found = True
+                                    if entry[2] == U.nick and \
+                                      entry[0] == U.language and \
+				      entry[1] == U.family:
+                                        user_found = True
 		        if not user_found:
 		            # Purpose to create it
-		            logging.info(u"User '%s' hasn't a passwd row in '%s'.") 
+		            logging.info(u"User '%s' hasn't a passwd row in '%s'." % (U.nick,passwd_file)) 
                             if raw_input('Do you want to appent it ? [Y/n] ') != 'n':
                                 with open(passwd_file, 'a') as f:
                                     password = getpass('Password > ')
@@ -117,6 +138,40 @@ class Command(BaseCommand):
                                 password = getpass('Password > ')
                                 line = str( (U.language,U.family,U.nick,password) )
                                 f.write(line)
+
+                    # Try to see if user exists in user-config
+                    user_found = False
+                    user_file = wikipedia.config.datafilepath('user-config.py')
+                    REG_USER_LINE = re.compile("usernames\['(.*)'\]\['(.*)'\] = u?'(.*)'")
+                    try:
+                        with open(user_file, 'r') as f:
+                            for line in f.readlines():
+                                if REG_USER_LINE.match(line):
+                                     family,lang,nick = REG_USER_LINE.sub(r'\1 \2 \3', line).split()
+                                     if family == U.family and lang == U.language and nick == U.nick:
+                                         user_found = True
+                                         break
+
+		    except IOError as e:
+		        # If file doesn't exist create it.
+		        logging.warning("File '%s' does not exist" % user_file)
+                        with open(user_file, 'w') as f:
+                            f.write("# -*- coding: utf-8  -*-")
+		            logging.warning("Create file '%s'" % user_file)
+		    finally:
+		        if user_found:
+		            logging.info(u"User '%s' has a row in '%s'." % (U.nick,user_file)) 
+                        else:
+		            logging.info(u"User '%s' hasn't a row in '%s'." % (U.nick,user_file))
+                            # Ask for add line
+                            if raw_input('Do you want to append user line ? [Y/n] ') != 'n':
+                                with open(user_file, 'a') as f:
+                                    user_line = "\nusernames['%s']['%s'] = u'%s'"  % (U.family,U.language,U.nick)
+                                    f.write(user_line)
+                                    # Ask for add sysops line
+                                    if raw_input('Is user sysops ? [N/y] ') == 'y':
+                                        sys_line = "sysopnames['%s']['%s'] = u'%s'"  % (U.family,U.language,U.nick)
+                                        f.write(user_line)
 
                 # Launch login script
                 L.readPassword()

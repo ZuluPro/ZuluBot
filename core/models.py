@@ -35,7 +35,7 @@ class Wiki_User(models.Model):
 
     nick = models.CharField(max_length=100, help_text='Your id on wiki')
     family = models.CharField(max_length=50, help_text='Your wikimedia family', validators=[validate_family])
-    language = models.CharField(max_length=3)
+    language = models.CharField(max_length=10)
     url = models.CharField(max_length=200, help_text='index.php URL', validators=[validate_url])
     comment = models.CharField(max_length=1000,null=True, blank=True)
     active = models.BooleanField(default=False)
