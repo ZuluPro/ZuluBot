@@ -88,9 +88,9 @@ def check_page(request):
     w = wiki_handler()
     p = w.get_page(request.GET['page'])
     if p.exists():
-        messages.add_message(request, messages.SUCCESS, 'Correcte.')
+        messages.add_message(request, messages.SUCCESS, "'%s' existant." % p.title())
     else:
-        messages.add_message(request, messages.WARNING, 'Introuvable.')
+        messages.add_message(request, messages.WARNING, "'%s' introuvable." % p.title())
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
