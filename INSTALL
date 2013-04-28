@@ -31,17 +31,23 @@ git clone https://github.com/ZuluPro/ZuluBot.git
 
 2. Edit 'ZuluBot/zulubot/settings_local.py'
 -------------------------------------------
+#You can choose your DB engine:
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': '/home/zulu/zulubot.db',
   }
 }
+
+#Set full path to pywikipedia library:
 WIKI = { 
     'path': '/full/path/to/pywikipedia',
 }
 
-You can also use an another DB engine.
+#You can add Django Celery to enable asynchronous tasking:
+INSTALLED_APPS = INSTALLED_APPS+('djcelery',)
+
+# Write your personnal settings in this file
 
 3. Add you bot to ZuluBot DB
 ----------------------------
