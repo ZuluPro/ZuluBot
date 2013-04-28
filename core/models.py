@@ -45,6 +45,7 @@ class Wiki_User(models.Model):
     class Meta:
         app_label = 'core'
         ordering = ('active','nick')
+        unique_together = [('nick','family','language')]
 
     class NoActiveUser(Exception):
         """No active user found in database."""
@@ -52,6 +53,9 @@ class Wiki_User(models.Model):
 
     def __unicode__(self):
         return self.nick
+
+    def full_name(self):
+        return '{nick} - {family} - {language}'.format(**self.__dict__)
 
     def set_active(self):
         """
