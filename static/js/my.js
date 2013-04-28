@@ -105,8 +105,8 @@ $(document).on('click', '#btn-rename-pages', function() {
       $.ajax({type:'POST', url:'/move_pages', async:true,
           data:{
               pages:$('#pages').val(), 
-              from:$('#rename-from').val(),
-              to:$('#rename-to').val(),
+              pat:$('#rename-from').val(),
+              repl:$('#rename-to').val(),
               redirect:$('#rename-redirect:checked').val() || '',
               csrfmiddlewaretoken:csrf
           },
