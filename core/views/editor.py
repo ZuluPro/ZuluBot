@@ -1,5 +1,5 @@
-from django.http import Http404, HttpResponse
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.contrib import messages
 from django.conf import settings
 
@@ -9,6 +9,9 @@ from core.handlers import wiki_handler
 @is_ajax()
 @method_restricted_to('GET')
 def get_page_text(request):
+    """
+    Get a paget text with 'q' key.
+    """
     w = wiki_handler()
     page = w.get_page(request.GET['q'])
     if page.exists():
@@ -20,6 +23,9 @@ def get_page_text(request):
 @is_ajax()
 @method_restricted_to('POST')
 def put_page_text(request):
+    """
+    Put text to a page with 'page' and 'text' keys.
+    """
     w = wiki_handler()
     page = w.get_page(request.POST['page'])
     page.put(request.POST['text'], request.POST['comment'])

@@ -29,7 +29,10 @@ def search_page(request):
     # By default search in words
     if request.GET.get('type','content') == 'content':
         results = [ p for p in w.search_words(request.GET['q']) ]
-    # Else search by namespace and name:w
+    elif request.GET['type'] == 'references':
+        page = w.get_page(request.GET['q'])
+        results = page.getReferences()
+    # Else search by namespace and name
     else:
         results = [ p for p in \
             w.search_in_title(request.GET['q'], namespaces=request.GET.get('type',None)) ]

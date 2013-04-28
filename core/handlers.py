@@ -40,6 +40,16 @@ class wiki_handler(object):
         """
         return pagegenerators.SearchPageGenerator(key, number=0, namespaces=namespaces)
 
+    def get_references(self, page, number=50):
+        """
+        Return page's reference as iterator.
+        """
+        page = self.get_page(page)
+        for i,p in enumerate(page.getReferences()):
+            if i >= number:
+                break
+            yield p
+
     def search_in_title(self, key, namespaces=None):
         """
         Get pages which title matching with given key.
@@ -410,7 +420,7 @@ class wiki_handler(object):
         w = wiki_handler()
         full_url = w.dbuser.url+page.urlname()
         if not link:
-		    return full_url
+            return full_url
         else:
             html = ' <a href="%s"><i class="icon-check"></i></a>' % full_url
             return html

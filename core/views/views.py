@@ -7,6 +7,10 @@ from core.handlers import wiki_handler
 
 @method_restricted_to('GET')
 def index(request):
+    """
+    Index of website.
+    This is the only view which is not AJAX.
+    """
     # TODO
     # Handling wiki ValueError
     try:
@@ -24,17 +28,11 @@ def index(request):
     })
 
 @is_ajax()
-@method_restricted_to('POST')
-def get_page_links(request):
-    page_names = request.POST.getlist('pages[]')
-
-    return render(request, 'base/messages.html', {
-        'messages':msgs,
-    })
-
-@is_ajax()
 @method_restricted_to('GET')
 def search_contrib(request):
+    """
+    DO NOT USE
+    """
     w = wiki_handler()
     contribs = w.get_contrib()
     if request.GET.get('q',''):
