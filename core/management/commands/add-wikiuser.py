@@ -128,7 +128,7 @@ class Command(BaseCommand):
                             if raw_input('Do you want to appent it ? [Y/n] ') != 'n':
                                 with open(passwd_file, 'a') as f:
                                     password = getpass('Password > ')
-                                    line = str( (U.language,U.family,U.nick,password) )
+                                    line = '\n'+str( (U.language,U.family,U.nick,password) )
                                     f.write(line)
 		    except IOError as e:
 		        # Except files not exists and purpose to create
