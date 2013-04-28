@@ -2,7 +2,7 @@
 // BASIC FUNC
 var print_message = function(msg,tag,into) {
   var html = '<div id="msg-'+tag+'" class="alert alert-'+tag+'" style="display: block;"><p class="pull-right"><button class="close" onclick="$(this).parent().parent().hide(250)">×</button></p><div>'+msg+'</div></div>';
-  $(into).prepend(html);
+  $(into).append(html);
 }
 
 var print_reload = function(into) {
@@ -13,7 +13,7 @@ var print_reload = function(into) {
 var print_loading_gif = function(into, heigth, width) {
   if(typeof(heigth)==='undefined') heigth = 100;
   if(typeof(width)==='undefined') width = 100;
-  $(into).prepend('<img class="loader" src="/static/img/ajax-loader.gif" height="'+heigth+'%" width="'+width+'%">' );
+  $(into).append('<img class="loader" src="/static/img/ajax-loader.gif" height="'+heigth+'%" width="'+width+'%">' );
 }
 var remove_loading_gif = function(from) {
   $(from+ ' .loader').remove();
@@ -103,10 +103,10 @@ $(document).on('click', '#btn-delete-pages', function() {
 /// ACTIONS FOR SELECTED PAGES
 // CHECK IF CATEGORY EXISTS
 $(document).on('click', '.btn-check-page', function() {
-    var into = $(this).parent().parent();
+    var into = '#'+$(this).parent().parent().attr('id');
     var pagename = $( '#'+$(this).attr('rel') ).val()
     if ( $(this).hasClass('btn-check-category') ) {
-      pagename = 'Catégorie:'+pagename
+      pagename = 'Catégorie:'+pagename;
     }
     if ( pagename.length ) {
       print_loading_gif(into,50,50);
