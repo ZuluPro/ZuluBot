@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib import messages
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from core.utils import method_restricted_to, is_ajax
 from core.handlers import wiki_handler
@@ -29,7 +30,7 @@ def put_page_text(request):
     w = wiki_handler()
     page = w.get_page(request.POST['page'])
     page.put(request.POST['text'], request.POST['comment'])
-    messages.add_message(request, messages.SUCCESS, u"Publication effectu\xe9e.")
+    messages.add_message(request, messages.SUCCESS, _("Publication done."))
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })

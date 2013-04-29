@@ -10,6 +10,7 @@ if method isn't appropriate.
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 
 from core.views import CELERY_IS_ACTIVE
 from core.utils import method_restricted_to, is_ajax
@@ -68,7 +69,7 @@ def move_pages(request):
     pages = request.POST.getlist('pages[]')
     if len(pages) > 1 and CELERY_IS_ACTIVE :
         async_move_pages.delay(pages, request.POST['pat'], request.POST['repl'], request.POST['redirect'])
-        messages.add_message(request, messages.INFO, 'Renommage en cours.')
+        messages.add_message(request, messages.INFO, _('Renaming in progress.'))
         msgs = messages.get_messages(request)
     else:
         w = wiki_handler()
@@ -88,9 +89,11 @@ def check_page(request):
     w = wiki_handler()
     p = w.get_page(request.GET['page'])
     if p.exists():
-        messages.add_message(request, messages.SUCCESS, "'%s' existant." % p.title())
+        messages.add_message(request, messages.SUCCESS, _("'%(page)s' exists.") % \
+          {'page':p.title()})
     else:
-        messages.add_message(request, messages.WARNING, "'%s' introuvable." % p.title())
+        messages.add_message(request, messages.WARNING, _("'%(page)s' not found.") % \
+          {'page':p.title()})
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
@@ -105,7 +108,7 @@ def add_category(request):
     pages = request.POST.getlist('pages[]')
     if CELERY_IS_ACTIVE :
         async_add_category.delay(pages, request.POST['category'])
-        messages.add_message(request, messages.INFO, u'Ajout de cat\xe9gorie en cours.')
+        messages.add_message(request, messages.INFO, _('Category adding in progress.'))
         msgs = messages.get_messages(request)
     else:
         w = wiki_handler()
@@ -125,11 +128,11 @@ def move_category(request):
     """
     if CELERY_IS_ACTIVE :
         async_move_category.delay(request.POST['from'], request.POST['to'])
-        messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie en cours.')
+        messages.add_message(request, messages.INFO, _('Category moving in progress.'))
     else:
         w = wiki_handler()
         w.move_category(request.POST['from'], request.POST['to'])
-        messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
+        messages.add_message(request, messages.INFO, _('Category moving finished.'))
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
@@ -144,12 +147,12 @@ def remove_category(request):
     pages = request.POST.getlist('pages[]')
     if CELERY_IS_ACTIVE :
         async_remove_category.delay(pages, request.POST['category'])
-        messages.add_message(request, messages.INFO, u'Enl\xe8vement de cat\xe9gorie en cours.')
+        messages.add_message(request, messages.INFO, _('Category removing in progress.'))
         msgs = messages.get_messages(request)
     else:
         w = wiki_handler()
         results.remove_category(pages, request.POST['category'])
-        messages.add_message(request, messages.INFO, u'Enl\xe8vement de cat\xe9gorie termin\xe9.'),
+        messages.add_message(request, messages.INFO, _('Category removing finished.'))
         msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
@@ -167,7 +170,7 @@ def add_internal_link(request):
     pages = request.POST.getlist('pages[]')
     if CELERY_IS_ACTIVE :
         async_add_internal_link.delay(pages, request.POST['link'], request.POST['link_text'])
-        messages.add_message(request, messages.INFO, u"Ajout d'hyperliens en cours.")
+        messages.add_message(request, messages.INFO, _('Hyperlinks adding in progress.'))
     else:
         w = wiki_handler()
         results = w.add_internal_link(pages, request.POST['link'], request.POST['link_text'])
@@ -187,7 +190,7 @@ def sub(request):
     pages = request.POST.getlist('pages[]')
     if CELERY_IS_ACTIVE :
         async_sub.delay(pages, request.POST['from'], request.POST['to'])
-        messages.add_message(request, messages.INFO, u"Subtitution de texte en cours.")
+        messages.add_message(request, messages.INFO, _('Text subsitution in progress'))
     else:
         w = wiki_handler()
         results = w.sub(pages, request.POST['from'], request.POST['to'])
@@ -206,7 +209,7 @@ def get_page_links(request):
     w = wiki_handler()
     page_names = request.GET.getlist('pages[]')
     results = w.get_pages_wiki_url(page_names)
-    msgs = results.make_messages(request, header='Hyperliens:')
+    msgs = results.make_messages(request, header=_('Hyperlinks'))
 
     return render(request, 'base/messages.html', {
         'messages':msgs,

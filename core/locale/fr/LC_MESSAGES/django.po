@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-29 02:55+0200\n"
+"POT-Creation-Date: 2013-04-29 04:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Anthony MONTHE <montheanthony@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,7 +43,7 @@ msgid "No modification to apply to '%(page)s'"
 msgstr "Aucune modification à appliquer sur %(page)s"
 
 #: handlers.py:184
-#, fuzzy, python-format
+#, python-format
 msgid "'%(category)s' add in '%(page)s'."
 msgstr "'%(category)s' ajouté dans '%(page)s'."
 
@@ -100,3 +100,70 @@ msgstr "Aucun hyperlien '%(link)s' ajouté dans '%(page)s'."
 #, python-format
 msgid "Add hyperlink(s) for '%(link)s'"
 msgstr "Hyperlien(s) ajouté pour '%(link)s'"
+
+#: models.py:37
+msgid "Your nick on wiki"
+msgstr "Votre pseudo sur le wiki"
+
+#: models.py:38
+msgid "Your wikimedia family"
+msgstr "Votre famille de wikimedia"
+
+#: validators.py:11
+#, python-format
+msgid "Family %(family)s doesn't exist."
+msgstr "La famille %(family)s n'existe pas."
+
+#: validators.py:17
+msgid "URL must finish by '/'"
+msgstr "L'URL doit finir par '/'"
+
+#: views/actions.py:72
+msgid "Renaming in progress."
+msgstr "Renommage en cours."
+
+#: views/actions.py:92
+#, python-format
+msgid "'%(page)s' exists."
+msgstr "'%(page)s' existe."
+
+#: views/actions.py:95
+#, python-format
+msgid "'%(page)s' not found."
+msgstr "'%(page)s' non trouvé."
+
+#: views/actions.py:111
+msgid "Category adding in progress."
+msgstr "Ajout de catégorie en cours."
+
+#: views/actions.py:131
+msgid "Category moving in progress."
+msgstr "Déplacement de catégorie en cours."
+
+#: views/actions.py:135
+msgid "Category moving finished."
+msgstr "Déplacement de catégorie terminé."
+
+#: views/actions.py:150
+msgid "Category removing in progress."
+msgstr "Enlèvement de catégorie terminé."
+
+#: views/actions.py:155
+msgid "Category removing finished."
+msgstr "Enlèvement de catégorie terminé."
+
+#: views/actions.py:173
+msgid "Hyperlinks adding in progress."
+msgstr "Ajout d'hyperliens en cours."
+
+#: views/actions.py:193
+msgid "Text subsitution in progress"
+msgstr "Substitution de texte en cours."
+
+#: views/actions.py:212
+msgid "Hyperlinks"
+msgstr "Hyperliens"
+
+#: views/editor.py:33
+msgid "Publication done."
+msgstr "Publication effectuée."
