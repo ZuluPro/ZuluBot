@@ -52,7 +52,7 @@ $(document).on('click', '#btn-reinit-editor', function() {
   $('#btn-search-editor').click();
 });
 
-// INSERT BOLD TAGS
+// INSERT NEAR
 $(document).on('click', '.insert-near', function() {
   var type = $(this).attr('id').slice(11);
   $('#editor-text').replaceAtCaret('text',type);
@@ -61,6 +61,14 @@ $(document).on('click', '.insert-near', function() {
 // INSERT AN EMPTY UNORDERED LIST
 $(document).on('click', '#btn-editor-list', function() {
   $('#editor-text').insertAtCaret('*\n*\n');
+})
+
+// CLASS GOTO EDITOR AND GET PAGE
+$(document).on('click', '.goto-editor', function() {
+  var page = $(this).attr('page');
+  $('#tab-editor').click();
+  $('#editor_q').val(page);
+  $('#btn-search-editor').click();
 })
 
 // FUNC FOR INSERT AT SELECTION

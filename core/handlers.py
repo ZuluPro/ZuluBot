@@ -422,24 +422,25 @@ class wiki_handler(object):
                 continue
             yield (wpage,id,datetime.strptime(str(date),'%Y%m%d%H%M%S'),comment)
 
-    def get_wiki_url(self, page, link=None):
+    def get_wiki_url(self, page, htmlize=False):
         """
         Get link into mediawiki for a page.
         If link is True, return a HTML <a>.
         """
         w = wiki_handler()
-        full_url = w.dbuser.url+page.urlname()
-        if not link:
-            return full_url
+        url = w.dbuser.url+page.urlname()
+        if not htmlize:
+            return url
         else:
-            html = ' <a href="%s"><i class="icon-check"></i></a>' % full_url
+            html = ' <a href="%s"><i class="icon-check"></i></a>' % url
             return html
 
-    def get_pages_wiki_url(self, pages, link=None):
+    def get_pages_wiki_url(self, pages):
         """
         Return mediawiki links for list of pages.
         Returned as Task_Result.
         """
+        HTML_EDTOR_LINK = u'<a class="goto-editor" page="%s"><i class="icon-edit"></i></a>'
         # Format pages arg
         if not isinstance(pages, (tuple,list)) :
             pages = (pages,)
@@ -447,7 +448,12 @@ class wiki_handler(object):
         results = Task_Result()
         for p in pages:
             p = self.get_page(p)
-            msg = u'<a href="{0}">{1}</a>'.format(self.get_wiki_url(p,link), p.title())
+            data = {
+              'url':self.get_wiki_url(p),
+              'title':p.title(),
+			  'editor': HTML_EDTOR_LINK % p.title()
+            }
+            msg = u'%(editor)s  <a href="%(url)s">%(title)s</a>' % (data)
             results.add_result('info',msg)
         return results
 
