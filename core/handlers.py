@@ -450,3 +450,12 @@ class wiki_handler(object):
             msg = u'<a href="{0}">{1}</a>'.format(self.get_wiki_url(p,link), p.title())
             results.add_result('info',msg)
         return results
+
+    def get_template(self, template):
+        """
+        Get a template by its short or long name.
+        """
+        template = wikipedia.Page(self.site, template, defaultNamespace=10)
+        return template
+
+
