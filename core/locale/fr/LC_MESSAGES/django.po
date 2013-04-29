@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-29 04:53+0200\n"
+"POT-Creation-Date: 2013-04-29 15:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Anthony MONTHE <montheanthony@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -262,27 +262,31 @@ msgstr "Supprimer catégorie"
 msgid "Rename category"
 msgstr "Renommer catégorie"
 
-#: templates/contrib/index.html:2 templates/editor/index.html:4
+#: templates/contrib/index.html:2 templates/editor/index.html:6
 msgid "Search"
 msgstr "Rechercher"
 
-#: templates/editor/index.html:12
+#: templates/editor/index.html:5
+msgid "Page name"
+msgstr "Nom de page"
+
+#: templates/editor/index.html:16
 msgid "Comment"
 msgstr "Commentaire"
 
-#: templates/editor/index.html:16
+#: templates/editor/index.html:20
 msgid "Publish"
 msgstr "Publier"
 
-#: templates/editor/index.html:17
+#: templates/editor/index.html:21
 msgid "Cancel"
 msgstr "Annuler"
 
-#: templates/editor/index.html:20
+#: templates/editor/index.html:24
 msgid "Minor edit"
 msgstr "Edition mineure"
 
-#: templates/editor/index.html:24
+#: templates/editor/index.html:28
 msgid "View"
 msgstr "Visualiser"
 
