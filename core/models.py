@@ -46,6 +46,7 @@ class Wiki_User(models.Model):
         app_label = 'core'
         ordering = ('active','nick')
         unique_together = [('nick','family','language')]
+        verbose_name = 'utilisateur'
 
     class NoActiveUser(Exception):
         """No active user found in database."""

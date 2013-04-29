@@ -1,0 +1,102 @@
+# ZuluBot French Translation.
+# Copyright (C) 2013
+# This file is distributed under the same license as the ZuluBot package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-04-29 02:55+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Anthony MONTHE <montheanthony@hotmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: handlers.py:83 handlers.py:222
+msgid "- Deleting"
+msgstr "- Suppression"
+
+#: handlers.py:97 handlers.py:285
+#, python-format
+msgid "Move '%(old_page)s' to '%(new_page)s'"
+msgstr "Déplacement de '%(old_page)s' vers '%(new_page)s'"
+
+#: handlers.py:126
+#, python-format
+msgid "Moving '%(old_page)s' to '%(new_page)s' failed"
+msgstr "Déplacement de '%(old_page)s' vers '%(new_page)s' échoué"
+
+#: handlers.py:127
+#, python-format
+msgid "'%(old_page)s' moved to '%(new_page)s'"
+msgstr "%(old_page)s déplacé vers %(new_page)s"
+
+#: handlers.py:128
+#, python-format
+msgid "No modification to apply to '%(page)s'"
+msgstr "Aucune modification à appliquer sur %(page)s"
+
+#: handlers.py:184
+#, fuzzy, python-format
+msgid "'%(category)s' add in '%(page)s'."
+msgstr "'%(category)s' ajouté dans '%(page)s'."
+
+#: handlers.py:185
+#, python-format
+msgid "'%(category)s' already in '%(page)s'."
+msgstr "'%(category)s' déjà dans '%(page)s'."
+
+#: handlers.py:227
+#, python-format
+msgid "'%(page)s' deleted %(link)s"
+msgstr "'%(page)s' supprimé %(link)s"
+
+#: handlers.py:250
+#, python-format
+msgid "'%(category)s' remove from '%(page)s'."
+msgstr "'%(category)s' enlevé de '%(page)s'."
+
+#: handlers.py:251
+#, python-format
+msgid "'%(category)s' not found in '%(page)s'."
+msgstr "'%(category)s' non trouvé dans '%(page)s'."
+
+#: handlers.py:326
+#, fuzzy, python-format
+msgid "Subsitution from '%(pat)s' to '%(repl)s'"
+msgstr "Subsitution de '%(pat)' vers '%(repl)'"
+
+#: handlers.py:329
+#, python-format
+msgid ""
+"Subsitution from '%(pat)s' to '%(repl)s' in '%(page)s' terminated with "
+"success"
+msgstr ""
+"Subsitution depuis '%(pat)s' vers '%(repl)s' dans '%(page)s' terminée avec "
+"succès"
+
+#: handlers.py:333
+#, python-format
+msgid "No occurence of '%(pat)s' found in '%(page)s'"
+msgstr "Pas d'occurence de '%(pat)s' dans '%(page)s'"
+
+#: handlers.py:358
+#, python-format
+msgid "Hyperlink(s) '%(link)s' added in '%(page)s'."
+msgstr "Hyperliens '%(link)s' ajouté dans '%(page)s'."
+
+#: handlers.py:359
+#, python-format
+msgid "No hyperlink '%(link)s' added in '%(page)s'."
+msgstr "Aucun hyperlien '%(link)s' ajouté dans '%(page)s'."
+
+#: handlers.py:395
+#, python-format
+msgid "Add hyperlink(s) for '%(link)s'"
+msgstr "Hyperlien(s) ajouté pour '%(link)s'"

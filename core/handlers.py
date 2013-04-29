@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+import wikipedia, catlib, userlib, pagegenerators
+
 from core.utils import Task_Result
 from core.models import Wiki_User
-import wikipedia, catlib, userlib, pagegenerators
+
 from datetime import datetime
 import re
 
@@ -77,7 +80,7 @@ class wiki_handler(object):
         # TODO
         #  To improve a lot and add in MVC
         self.get_page(page).delete(
-            reason='-Suppression',
+            reason=_('- Deleting'),
             prompt=False,
             mark=True
         )
@@ -91,7 +94,8 @@ class wiki_handler(object):
         try:
             new_page.put(
                 newtext=old_page.get(),
-                comment=u'D\xe9placement de %s vers %s' % (old_page.title(),new_page.title()),
+                comment=_("Move '%(old_page)s' to '%(new_page)s'") % \
+                    {'old_page':old_page.title(), 'new_page':new_page.title()},
                 minorEdit=False,
             )
         except wikipedia.IsRedirectPage :
@@ -119,9 +123,9 @@ class wiki_handler(object):
             pages = list(set(pages))
 
         results = Task_Result()
-        ERROR = u'D\xe9placement de "%s" vers "%s" \xe9chou\xe9'
-        SUCCESS = u'"%s" d\xe9plac\xe9 vers "%s"'
-        WARNING = u'Pas de modification sur "%s"'
+        ERROR = _("Moving '%(old_page)s' to '%(new_page)s' failed")
+        SUCCESS = _("'%(old_page)s' moved to '%(new_page)s'")
+        WARNING = _("No modification to apply to '%(page)s'")
         for p in pages:
             try:
                 old_page = self.get_page(p)
@@ -131,17 +135,17 @@ class wiki_handler(object):
                 if old_page != new_page :
                     self.move_page(old_page, new_page, redirect)
                     # Format success message
-                    msg = (SUCCESS % (
-                        old_page.title() + old_html_link,
-                        new_page.title() + new_html_link
-                    ))
+                    msg = (SUCCESS % {
+                      'old_page':old_page.title() + old_html_link,
+                      'new_page':new_page.title() + new_html_link
+                    })
                     results.add_result('success',msg)
                 else:
-                    msg = WARNING % old_page.title()
+                    msg = WARNING % {'page':old_page.title()}
                     results.add_result('warning',msg)
 
             except:
-                msg = ERROR % (old_page.title(), new_page.title())
+                msg = ERROR % {'old_page':old_page.title(), 'new_page':new_page.title()}
                 results.add_result('error',msg)
 
         return results
@@ -166,6 +170,8 @@ class wiki_handler(object):
         A Task_result object can be give this method
         for follow several task.
         """
+        # TODO
+        ## Find a better way to find category
         # Format pages arg
         if not isinstance(pages, (tuple,list)) :
             pages = (pages,)
@@ -175,8 +181,8 @@ class wiki_handler(object):
         category = self.get_category(category)
 
         results = results or Task_Result()
-        SUCCESS = u'"%s" ajout\xe9e \xe0 "%s".'
-        WARNING = u'"%s" d\xe9j\xe0 pr\xe9sente dans "%s".'
+        SUCCESS = _(u"'%(category)s' add in '%(page)s'.")
+        WARNING = _(u"'%(category)s' already in '%(page)s'.")
         for p in pages :
             p = self.get_page(p)
             html_link = self.get_wiki_url(p,True)
@@ -188,18 +194,19 @@ class wiki_handler(object):
             else :
                 # Cat is already present
                 if re.search((u'\[\[%s\]\]' % category.title()) , old_text) :
-                    msg = (WARNING % (category.title(), p.title())) + html_link
+                    msg = (WARNING % \
+                      {'category':category.title(), 'page':p.title()+html_link})
                     results.add_result('warning', msg)
                 else:
                     # Search if a category zone is present
-                    s = re.search('\[\[Cat.gorie:[^\]]*\]\]', old_text)
+                    s = re.search('\[\[Cat.gor(ie|y):[^\]]*\]\]', old_text)
                     if s :
                         new_text = old_text[:s.end()]+ (u'\n[[%s]]' % \
                                 category.title()) +old_text[s.end():]
                     else :
                         new_text = old_text+(u'\n[[%s]]' % category.title())
                     p.put(new_text, comment=(u'+[[%s]]' % category.title()))
-                    msg = SUCCESS % (category.title(), p.title()) + html_link
+                    msg = SUCCESS % {'category':category.title(), 'page':p.title()+html_link}
                     results.add_result('success',msg)
         return results 
 
@@ -212,12 +219,12 @@ class wiki_handler(object):
         results = results or Task_Result()
         category = self.get_category(category)
         category.delete(
-            reason='-Suppression',
+            reason=_('- Deleting'),
             prompt=False,
             mark=True
         )
         html_link = self.get_wiki_url(category,True)
-        msg = u'Cat\xe9gorie "%s" supprim\xe9e. %s' % (category.title(), html_link)
+        msg = _("'%(page)s' deleted %(link)s") % {'page':category.title(), 'link':html_link}
         results.add_result('success',msg)
         return results 
 
@@ -240,8 +247,8 @@ class wiki_handler(object):
         category = self.get_category(category)
 
         results = results or Task_Result()
-        SUCCESS = u'"%s" supprim\xe9e de "%s".'
-        WARNING = u'"%s" non trouv\xe9e dans "%s".'
+        SUCCESS = _("'%(category)s' remove from '%(page)s'.")
+        WARNING = _("'%(category)s' not found in '%(page)s'.")
         for p in pages :
             p = self.get_page(p)
             html_link = self.get_wiki_url(p,True)
@@ -249,7 +256,7 @@ class wiki_handler(object):
             if re.search((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), old_text):
                 new_text = re.sub((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), '', old_text)
                 p.put(new_text, comment=(u'-[[%s]]' % category.title()))
-                msg = SUCCESS % (category.title(), p.title()+html_link)
+                msg = SUCCESS % {'category':category.title(), 'page':p.title()+html_link}
                 results.add_result('success',msg)
             else:
                 msg = WARNING % (category.title(), p.title()+html_link)
@@ -275,13 +282,13 @@ class wiki_handler(object):
 
         # Move 
         if not new_cat.exists() and old_cat.exists() :
+            msg = _("Move '%(old_page)s' to '%(new_page)s'") % \
+                {'old_page':old_cat.title(), 'new_page':new_cat.title()+html_link}
             new_cat.put(
                 newtext=old_cat.get(),
-                comment=u'D\xe9placement de %s vers %s' % (old_cat.title(),new_cat.title()),
-                minorEdit=False,
+                comment=msg,
+                minorEdit=False
             )
-            msg = u'D\xe9placement de %s vers %s termin\xe9.' % \
-                (old_cat.title(), new_cat.title()+html_link)
             results.add_result('success',msg)
             self.delete_category(old_cat.title())
         return results
@@ -316,12 +323,15 @@ class wiki_handler(object):
             if new_text != old_text :
                 page.put(
                     newtext=new_text,
-                    comment=u"Subsitution de '%s' vers '%s'" % (pat,repl),
+					comment=_("Subsitution from '%(pat)s' to '%(repl)s'") % \
+                      {'pat':pat,'repl':repl},
                 )
-                msg = u"Subsitution de '%s' vers '%s' dans '%s' avec succ\xe8s" % (pat, repl, page.title())
+                msg = _("Subsitution from '%(pat)s' to '%(repl)s' in '%(page)s' terminated with success") % \
+						{'pat':pat, 'repl':repl, 'page':page.title()}
                 results.add_result('success',msg)
             else:
-                msg = u"Aucune occurence de '%s' dans '%s'" % (pat, page.title())
+                msg = _("No occurence of '%(pat)s' found in '%(page)s'") % \
+                  {'pat':pat, 'page':page.title()}
                 results.add_result('warning',msg)
         return results
 
@@ -345,8 +355,8 @@ class wiki_handler(object):
         )
 
         results = Task_Result()
-        SUCCESS = u'Hyperlien(s) "%s" ajout\xe9(s) sur "%s".'
-        WARNING = u'Aucun hyperlien "%s" ajout\xe9(s) sur "%s".'
+        SUCCESS = _("Hyperlink(s) '%(link)s' added in '%(page)s'.")
+        WARNING = _("No hyperlink '%(link)s' added in '%(page)s'.")
         for page in pages:
             html_link = self.get_wiki_url(page,True)
             page = self.get_page(page)
@@ -382,12 +392,12 @@ class wiki_handler(object):
             if new_text != old_text :
                 page.put(
                     newtext=new_text,
-                    comment=u"Ajout d'hyperliens pour '%s'" % link,
+					comment=_("Add hyperlink(s) for '%(link)s'") % {'link':link},
                 )
-                msg = SUCCESS % (link, page.title())
+                msg = SUCCESS % {'link':link, 'page':page.title()}
                 results.add_result('success',msg)
             else:
-                msg = WARNING % (link, page.title()+results)
+                msg = WARNING % {'link':link, 'page':page.title()}
                 results.add_result('warning',msg)
             return results
 
