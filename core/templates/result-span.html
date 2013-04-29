@@ -1,13 +1,15 @@
+{% load i18n %}
+
 <div class="span3">
  <select multiple size="20" id="pages">
  </select>
 
  <select id="pages-meta-action">
   <option>---</option>
-  <option value="delete">Enlever</option>
-  <option value="delete-all">Tout enlever</option>
-  <option value="select-all">Tout sélectionner</option>
-  <option value="get-page-links">Obtenir les liens</option>
+  <option value="delete">{% trans "Remove" %}</option>
+  <option value="delete-all">{% trans "Remove all" %}</option>
+  <option value="select-all">{% trans "Select all" %}</option>
+  <option value="get-page-links">{% trans "Get links" %}</option>
  </select>
 </div>
 

@@ -1,6 +1,7 @@
+{% load i18n %}
 <div class="row">
  <div class="span12">
-  <input id="editor_q" class="input span9" type="text" placeholder="Rechercher">
+  <input id="editor_q" class="input span9" type="text" placeholder="{% trans "Search" %}">
  </div>
 </div>
 
@@ -8,19 +9,19 @@
  <div class="span9">
   <input id="editor-page" type="hidden" value="">
   <textarea id="editor-text" class="span9" rows="20"></textarea>
-  <input id="editor-comment" class="input span9" type="text" placeholder="Commentaire">
+  <input id="editor-comment" class="input span9" type="text" placeholder="{% trans "Comment" %}">
 
   <div class="btn-toolbar">
    <div class="btn-group">
-    <button id="btn-publish-editor" class="btn btn-primary">Publier</button>
-    <button id="btn-reinit-editor" class="btn">Annuler</button>
+    <button id="btn-publish-editor" class="btn btn-primary">{% trans "Publish" %}</button>
+    <button id="btn-reinit-editor" class="btn">{% trans "Cancel" %}</button>
    </div>
    <div class="btn-group">
-    <button id="btn-minor-editor" data-toggle="button" class="btn">Edition mineure</button>
+    <button id="btn-minor-editor" data-toggle="button" class="btn">{% trans "Minor edit" %}</button>
    </div>
    <!--
    <div class="btn-group">
-    <a class="btn" disabled href="">Visualiser</a>
+    <a class="btn" disabled href="">{% trans "View" %}</a>
    </div>
    --!>
   </div>

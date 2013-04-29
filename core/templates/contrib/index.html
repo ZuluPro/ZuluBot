@@ -1,4 +1,5 @@
-<input id="contrib_q" class="input span12 center" type ="text" placeholder="Rechercher">
+{% load i18n %}
+<input id="contrib_q" class="input span12 center" type ="text" placeholder="{% trans "Search" %}">
 <ul id="contribs" class="unstyled">
  {% include "contrib/li.html" %}
 </ul>

@@ -1,25 +1,26 @@
+{% load i18n %}
 <div class="span5">
  <div class="input-prepend">
-  <span class="add-on">Action</span>
+  <span class="add-on">{% trans "Action" %}</span>
   <select id="pages-action">
    <option>---</option>
-   <option value="add-category">Ajout de catégorie</option>
-   <option value="remove-category">Enlever des catégories</option>
-   <option value="delete-category">Suppression de catégorie</option>
-   <option value="move-category">Déplacement catégorie</option>
-   <option value="sub">Subsitution de texte</option>
-   <option value="rename-pages">Renommage de page</option>
-   <option value="add-hyperlink">Ajout d'hyperliens</option>
+   <option value="sub">{% trans "Text substitution" %}</option>
+   <option value="add-hyperlink">{% trans "Add hyperlinks" %}</option>
+   <option value="rename-pages">{% trans "Rename page" %}</option>
+   <option value="add-category">{% trans "Add category" %}</option>
+   <option value="remove-category">{% trans "Remove category" %}</option>
+   <option value="delete-category">{% trans "Delete category" %}</option>
+   <option value="move-category">{% trans "Rename category" %}</option>
   </select>
  </div>
 
+ {% include 'action/add-hyperlink.html' %}
+ {% include 'action/sub.html' %}
+ {% include 'action/rename-pages.html' %}
  {% include 'action/add-category.html' %}
  {% include 'action/remove-category.html' %}
  {% include 'action/delete-category.html' %}
  {% include 'action/move-category.html' %}
- {% include 'action/sub.html' %}
- {% include 'action/rename-pages.html' %}
- {% include 'action/add-hyperlink.html' %}
 
  <div id="action-msg-box"></div>
 

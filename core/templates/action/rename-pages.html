@@ -1,11 +1,12 @@
+{% load i18n %}
 <div id="div-action-rename-pages" style="display: none;">
  <div class="input-append">
-  <input type="text" id="rename-from" placeholder="Motif à remplacer"/>
-  <input type="text" id="rename-to" placeholder="Remplacer par"/>
-  <button id="btn-rename-pages" class="btn btn-primary">Appliquer</button>
+  <input type="text" id="rename-from" placeholder="{% trans "Pattern to replace" %}"/>
+  <input type="text" id="rename-to" placeholder="{% trans "Replace by" %}"/>
+  <button id="btn-rename-pages" class="btn btn-primary">{% trans "Apply" %}</button>
  </div>
  <label class="checkbox">
   <input id="rename-redirect" type="checkbox" name="redirect" value="on">
-  Ajouter une redirection à la place de l'ancienne page.
+  {% blocktrans %}Add a redirection instead of old page.{% endblocktrans %}
  </label>
 </div>

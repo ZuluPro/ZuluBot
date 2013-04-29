@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <div class="controls controls-row">
  <input id="id_id" type="hidden" value="{{ F.instance.pk|default_if_none:'' }}">
  {{ F.nick }}
@@ -7,15 +9,15 @@
 {{ F.url }}
 {{ F.comment }}
 <label class="checkbox pull-left">
- {{ F.active }} Rendre actif
+ {{ F.active }} {% trans "Make active" %}
 </label>
 
 <div class="btn-group pull-right">
 {% if F.instance.pk %}
- <p id="btn-delete-wikiuser" class="btn btn-danger">Supprimer</p>
- <p id="btn-update-wikiuser" class="btn btn-primary">Sauvegarder</p>
+ <p id="btn-delete-wikiuser" class="btn btn-danger">{% trans "Delete" %}</p>
+ <p id="btn-update-wikiuser" class="btn btn-primary">{% trans "Save" %}</p>
 {% else %}
- <p id="btn-add-wikiuser" class="pull-right btn btn-primary">Ajouter</p>
+ <p id="btn-add-wikiuser" class="pull-right btn btn-primary">{% trans "Add" %}</p>
 {% endif %}
 </div>
 <hr>
