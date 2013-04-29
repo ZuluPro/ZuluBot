@@ -53,8 +53,9 @@ $(document).on('click', '#btn-reinit-editor', function() {
 });
 
 // INSERT BOLD TAGS
-$(document).on('click', '#btn-editor-bold', function() {
-  $('#editor-text').replaceAtCaret('text','bold');
+$(document).on('click', '.insert-near', function() {
+  var type = $(this).attr('id').slice(11);
+  $('#editor-text').replaceAtCaret('text',type);
 })
 
 // INSERT AN EMPTY UNORDERED LIST
@@ -119,6 +120,10 @@ replaceAtCaret: function(myValue,myType){
 	  case 'linkEx':
         var insertBefore = "[http:// ";
         var insertAfter = " ]";
+      break;
+	  case 'title':
+        var insertBefore = "=";
+        var insertAfter = "=";
       break;
       default:
         var insertBefore = "[[";
