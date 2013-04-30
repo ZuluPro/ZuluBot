@@ -54,11 +54,14 @@ $(document).on('click', '#btn-delete-pages', function() {
 
 /// ACTIONS FOR SELECTED PAGES
 // CHECK IF CATEGORY EXISTS
-$(document).on('click', '.btn-check-category', function() {
-    var catname = $( '#'+$(this).attr('rel') ).val()
+$(document).on('click', '.btn-check-page', function() {
     var target = $(this).parent().parent();
-    if ( catname.length ) {
-      $.ajax({url:'/check_page', data:{page:'Catégorie:'+catname}, async:true,
+    var pagename = $( '#'+$(this).attr('rel') ).val()
+    if ( $(this).hasClass('btn-check-category') ) {
+      pagename = 'Catégorie:'+pagename
+    }
+    if ( pagename.length ) {
+      $.ajax({url:'/check_page', data:{page:pagename}, async:true,
         success: function(data, status, xhr) {
           $(target).append(data);
         },
@@ -118,6 +121,25 @@ $(document).on('click', '#btn-move-category', function() {
       });
     }
 });
+
+// ADD HYPERLINKS
+$(document).on('click', '#btn-add-hyperlink', function() {
+  if ( $('#link-to-add').val().length ) {
+    $.ajax({type:'POST', url:'/add_internal_link', async:true,
+      data:{
+        pages:$('#pages').val(), 
+        link:$('#link-to-add').val(),
+        link_text:$('#link-text').val(),
+        csrfmiddlewaretoken:csrf
+      },
+      success: function(data, status, xhr) {
+        $('#div-action-add-hyperlink').append(data);
+      },
+    });
+  }
+});
+
+
 
 // INFINITE LOOP FOR ASYNC TASKS
 window.onload = function start() {

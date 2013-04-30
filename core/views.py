@@ -4,7 +4,8 @@ from django.conf import settings
 
 from djcelery.models import TaskMeta
 
-from core.tasks import async_move_pages, async_add_category, async_move_category
+from core.tasks import async_move_pages, async_add_category, async_move_category, \
+        async_add_internal_link
 from core.utils import make_messages
 from zulubot.handlers import wiki_handler
 w = wiki_handler()
@@ -99,6 +100,18 @@ def remove_catgory(request):
         'messages':messages.get_messages(request),
     })
 
+def add_internal_link(request):
+    pages = request.POST.getlist('pages[]')
+    if not 'djcelery' in settings.INSTALLED_APPS :
+        async_add_internal_link.delay(pages, request.POST['link'], request.POST['link_text'])
+        messages.add_message(request, messages.INFO, u"Ajout d'hyperliens en cours.")
+    else:
+        results = w.add_internal_link(pages, request.POST['link'], request.POST['link_text'])
+        msgs = make_messages(request, results)
+
+    return render(request, 'base/messages.html', {
+        'messages':messages.get_messages(request),
+    })
 
 def get_finished_tasks(request):
     results = [ t.result  for t in TaskMeta.objects.all() ]
@@ -106,4 +119,3 @@ def get_finished_tasks(request):
     return render(request, 'base/messages.html', {
         'messages':make_messages(request, results),
     })
-    

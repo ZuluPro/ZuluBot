@@ -19,5 +19,13 @@ def async_remove_category_from(*args, **kwargs):
     return w.remove_category_from(*args, **kwargs)
 
 @task()
+def async_add_internal_link(*args, **kwargs):
+    return w.add_internal_link(*args, **kwargs)
+
+@task()
+def async_sub(*args, **kwargs):
+    return w.sub(*args, **kwargs)
+
+@task()
 def test(i,j=1):
     return i+j

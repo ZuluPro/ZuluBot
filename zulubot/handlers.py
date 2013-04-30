@@ -1,9 +1,11 @@
 from django.conf import settings
-from celery import task
-import wikipedia, catlib, pagegenerators
+import wikipedia, catlib, userlib, pagegenerators
 import re
 
 class wiki_handler(object):
+    """
+    Wiki handling, for make simply complex operations.
+    """
     REDIRECT = '#REDIRECTION [[%s]]'
 
     def __init__(self):
@@ -124,7 +126,6 @@ class wiki_handler(object):
             category = catlib.Category(self.site, category)
         elif issubclass(type(category), wikipedia.Page):
             category = catlib.Category(self.site, category.title())
-
         return category
 
     def add_category(self, pages, category):
@@ -227,10 +228,106 @@ class wiki_handler(object):
             )
         self.delete_category(old_cat.title())
 
-    def add_internal_link(self, page, key, link=''):
-        page = self.get_page(page)
-        page_text = page.get()
-        for i,match in enumerate(re.finditer(key,page_text)):
-            if not i % 5 :
-                pass
-        
+    def get_user(self, user):
+        """
+        Get a user by its short or long name.
+        """
+        if isinstance(user, userlib.User):
+            pass
+        elif isinstance(user, basestring):
+            user = userlib.User(self.site, user)
+        elif issubclass(type(user), wikipedia.Page):
+            user = userlib.User(self.site, user.name())
+        return user
+
+    def sub(self, pages, pat, repl):
+        """
+        Make a simple string replacement on list of page.
+        """
+        # Format pages arg
+        if not isinstance(pages, (tuple,list)) :
+            pages = (pages,)
+        else:
+            pages = list(set(pages))
+
+        results = {'error':[],'success':[],'warning':[]} 
+        for page in pages:
+            page = self.get_page(page)
+            old_text = page.get()
+            new_text = old_text.replace(pat,repl)
+            if new_text != old_text :
+                page.put(
+                    newtext=new_text,
+                    comment=u"Subsitution de '%s' vers '%s'" % (pat,repl),
+                )
+                msg = "Subsitution de '%s' vers '%s' dans '%s' avec succ\xe8s" % (pat, repl, page.title())
+                results['success'].append([page,msg])
+            else:
+                msg = "Aucune occurence de '%s' dans '%s'" % (pat, page.title())
+                results['warning'].append([page,msg])
+        return results
+
+    def add_internal_link(self, pages, link, link_text=''):
+        """
+        Add internal link to the list of page.
+        """
+        # Format pages arg
+        if not isinstance(pages, (tuple,list)) :
+            pages = (pages,)
+        else:
+            pages = list(set(pages))
+
+        link_reg = re.compile(link)
+        TO_NOT_LINK = (
+            re.compile(r"\[\[(?!.*\]\].*).*$"),
+            re.compile(r"\{\{(?!.*\}\}.*).*$", re.S),
+            re.compile(r"<nowiki>(?!.*</nowiki>.*).*$", re.S),
+            re.compile(r"<pre>(?!.*</pre>.*).*$", re.S),
+            re.compile(r"http://\S*$"),
+        )
+
+        SUCCESS = u'Hyperlien(s) "%s" ajout\xe9(s) sur "%s".'
+        WARNING = u'Aucun hyperlien "%s" ajout\xe9(s) sur "%s".'
+        results = {'error':[],'success':[],'warning':[]} 
+        for page in pages:
+            page = self.get_page(page)
+            old_text = page.get()
+            # Walk in text with the key ofr step
+            # Append text and add link or not
+            # Words are linked only each 5 step
+            new_text = ''
+            count = 0
+            for text in link_reg.split(old_text):
+                new_text += text
+                # Do not apply to last and empty split
+                if text.endswith(old_text[-10:]) or not text:
+                    continue
+                # if text unallow links
+                if False in [ False for r in TO_NOT_LINK if r.search(new_text) ]:
+                    new_text += link
+                else:
+                    # if step counter is finished
+                    if not count:
+                        # Add link text or not
+                        if not link_text:
+                            new_text += ('[[%s]]' % link)
+                        else:
+                            new_text += ('[[%s|%s]]' % (link,link_test))
+                        count = 5
+                    # Decrement count
+                    else:
+                        new_text += link
+                        count -= 1
+
+            # Put page only if modified
+            if new_text != old_text :
+                page.put(
+                    newtext=new_text,
+                    comment=u"Ajout d'hyperliens pour '%s'" % link,
+                )
+                msg = SUCCESS % (link, page.title())
+                results['success'].append([page,msg])
+            else:
+                msg = WARNING % (link, page.title())
+                results['warning'].append([page,msg])
+            return results
