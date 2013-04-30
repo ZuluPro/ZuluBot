@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+ 
+<html lang="en">
+  <head>
+   {% include "base/header.html" %}
+  </head>
+
+  <body>
+   {% include "base/nav-bar.html" %}
+   
+   <div class="container-fluid">
+    {% block body %}
+    {% endblock %}
+   </div> <!-- /container -->
+  
+   <div class="container-fluid">
+    <footer class="footer">
+     {% include "base/footer.html" %}
+    </footer>
+   </div> <!-- /container -->
+
+   <div class="modal hide fade in" style="display: hidden; width: 800px;" id="myModal">
+   </div>
+
+  </body>
+</html>
+   

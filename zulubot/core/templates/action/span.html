@@ -1,0 +1,23 @@
+<div class="span7">
+ <div class="input-prepend">
+  <span class="add-on">Action</span>
+  <select id="pages-action">
+   <option>---</option>
+   <option value="add-category">Ajout de catégorie</option>
+   <option value="delete-category">Suppression de catégorie</option>
+   <option value="move-category">Déplacement catégorie</option>
+   <option value="sub">Subsitution de texte</option>
+   <option value="rename-pages">Renommage de page</option>
+  </select>
+ </div>
+
+ {% include 'action/add-category.html' %}
+ {% include 'action/delete-category.html' %}
+ {% include 'action/sub.html' %}
+ {% include 'action/rename-pages.html' %}
+ {% include 'action/move-category.html' %}
+
+ <div id="action-msg-box"></div>
+
+</div>
+
