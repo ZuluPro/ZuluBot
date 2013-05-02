@@ -94,10 +94,10 @@ def check_page(request):
     p = w.get_page(request.GET['page'])
     if p.exists():
         messages.add_message(request, messages.SUCCESS, _("'%(page)s' exists.") %
-          {'page': p.title()})
+            {'page': '<a href="%s">%s</a>' % (w.get_wiki_url(p), p.title()) })
     else:
         messages.add_message(request, messages.WARNING, _("'%(page)s' not found.") %
-          {'page': p.title()})
+            {'page': '<a href="%s">%s</a>' % (w.get_wiki_url(p), p.title()) })
     return render(request, 'base/messages.html', {
         'messages': messages.get_messages(request),
     })
