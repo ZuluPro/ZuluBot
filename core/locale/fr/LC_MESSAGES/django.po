@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 22:44+0200\n"
+"POT-Creation-Date: 2013-05-02 23:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Anthony MONTHE <montheanthony@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,7 +111,7 @@ msgstr "Votre famille de wikimedia"
 
 #: models.py:51
 msgid "user"
-msgstr ""
+msgstr "utilisateur"
 
 #: validators.py:12
 #, python-format
@@ -359,15 +359,19 @@ msgstr "Enlèvement de catégorie terminé."
 msgid "Category removing finished."
 msgstr "Enlèvement de catégorie terminé."
 
-#: views/actions.py:181
+#: views/actions.py:178
+msgid "Category deleting finished."
+msgstr "Suppression de catégorie terminée."
+
+#: views/actions.py:197
 msgid "Hyperlinks adding in progress."
 msgstr "Ajout d'hyperliens en cours."
 
-#: views/actions.py:202
+#: views/actions.py:218
 msgid "Text subsitution in progress"
 msgstr "Substitution de texte en cours."
 
-#: views/actions.py:222
+#: views/actions.py:238
 msgid "Hyperlinks"
 msgstr "Hyperliens"
 

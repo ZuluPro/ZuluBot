@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^move_category$', 'core.views.move_category', name='move category'),
     url(r'^add_category$', 'core.views.add_category', name='add category'),
     url(r'^remove_category$', 'core.views.remove_category', name='remove category'),
+    url(r'^delete_category$', 'core.views.delete_category', name='delete category'),
     url(r'^add_internal_link$', 'core.views.add_internal_link', name='add internal link'),
     url(r'^sub$', 'core.views.sub', name='sub'),
 

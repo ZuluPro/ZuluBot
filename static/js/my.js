@@ -165,6 +165,26 @@ $(document).on('click', '#btn-add-category', function() {
     }
 });
 
+// DELETE CATEGORY
+$(document).on('click', '#btn-delete-category', function() {
+    if ( $('#category-to-delete').val().length ) {
+	  var into = '#div-action-delete-category';
+      print_loading_gif(into,50,50);
+      $.ajax({type:'POST', url:'/delete_category', async:true,
+          data:{
+              category:'Catégorie:'+$('#category-to-delete').val(),
+              csrfmiddlewaretoken:csrf
+          },
+          success: function(data, status, xhr) {
+              $('#div-action-delete-category').append(data);
+          },
+          complete: function(data, status, xhr) {
+            remove_loading_gif(into);
+          },
+      });
+    }
+});
+
 // REMOVE CATEGORY
 $(document).on('click', '#btn-remove-category', function() {
     if ( $('#category-to-remove').val().length ) {

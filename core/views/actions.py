@@ -169,6 +169,22 @@ def remove_category(request):
 
 @is_ajax()
 @method_restricted_to('POST')
+def delete_category(request):
+    """
+    Delete category.
+    """
+    w = wiki_handler()
+    results.delete(request.POST['category'])
+    messages.add_message(request, messages.SUCCESS, _('Category deleting finished.'))
+    msgs = results.make_messages(request)
+
+    return render(request, 'base/messages.html', {
+        'messages': messages.get_messages(request),
+    })
+
+
+@is_ajax()
+@method_restricted_to('POST')
 def add_internal_link(request):
     """
     Modify page's text for add internal links for the given string.
