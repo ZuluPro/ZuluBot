@@ -25,5 +25,5 @@ MIDDLEWARE_CLASSES = settings.MIDDLEWARE_CLASSES + (
 )
 
 WIKI = {
-    'path': '/usr/src/pywikipedia',
+    'path': '/usr/src/pywikipedia/',
 }
