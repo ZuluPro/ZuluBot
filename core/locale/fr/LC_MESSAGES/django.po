@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-29 16:43+0200\n"
+"POT-Creation-Date: 2013-05-02 22:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Anthony MONTHE <montheanthony@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,61 +18,61 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: handlers.py:83 handlers.py:222
+#: handlers.py:84 handlers.py:223
 msgid "- Deleting"
 msgstr "- Suppression"
 
-#: handlers.py:97 handlers.py:285
+#: handlers.py:98 handlers.py:286
 #, python-format
 msgid "Move '%(old_page)s' to '%(new_page)s'"
 msgstr "Déplacement de '%(old_page)s' vers '%(new_page)s'"
 
-#: handlers.py:126
+#: handlers.py:127
 #, python-format
 msgid "Moving '%(old_page)s' to '%(new_page)s' failed"
 msgstr "Déplacement de '%(old_page)s' vers '%(new_page)s' échoué"
 
-#: handlers.py:127
+#: handlers.py:128
 #, python-format
 msgid "'%(old_page)s' moved to '%(new_page)s'"
 msgstr "%(old_page)s déplacé vers %(new_page)s"
 
-#: handlers.py:128
+#: handlers.py:129
 #, python-format
 msgid "No modification to apply to '%(page)s'"
 msgstr "Aucune modification à appliquer sur %(page)s"
 
-#: handlers.py:184
+#: handlers.py:185
 #, python-format
 msgid "'%(category)s' add in '%(page)s'."
 msgstr "'%(category)s' ajouté dans '%(page)s'."
 
-#: handlers.py:185
+#: handlers.py:186
 #, python-format
 msgid "'%(category)s' already in '%(page)s'."
 msgstr "'%(category)s' déjà dans '%(page)s'."
 
-#: handlers.py:227
+#: handlers.py:228
 #, python-format
 msgid "'%(page)s' deleted %(link)s"
 msgstr "'%(page)s' supprimé %(link)s"
 
-#: handlers.py:250
+#: handlers.py:251
 #, python-format
 msgid "'%(category)s' remove from '%(page)s'."
 msgstr "'%(category)s' enlevé de '%(page)s'."
 
-#: handlers.py:251
+#: handlers.py:252
 #, python-format
 msgid "'%(category)s' not found in '%(page)s'."
 msgstr "'%(category)s' non trouvé dans '%(page)s'."
 
-#: handlers.py:326
+#: handlers.py:327
 #, fuzzy, python-format
 msgid "Subsitution from '%(pat)s' to '%(repl)s'"
 msgstr "Subsitution de '%(pat)' vers '%(repl)'"
 
-#: handlers.py:329
+#: handlers.py:330
 #, python-format
 msgid ""
 "Subsitution from '%(pat)s' to '%(repl)s' in '%(page)s' terminated with "
@@ -81,22 +81,22 @@ msgstr ""
 "Subsitution depuis '%(pat)s' vers '%(repl)s' dans '%(page)s' terminée avec "
 "succès"
 
-#: handlers.py:333
+#: handlers.py:334
 #, python-format
 msgid "No occurence of '%(pat)s' found in '%(page)s'"
 msgstr "Pas d'occurence de '%(pat)s' dans '%(page)s'"
 
-#: handlers.py:358
+#: handlers.py:359
 #, python-format
 msgid "Hyperlink(s) '%(link)s' added in '%(page)s'."
 msgstr "Hyperliens '%(link)s' ajouté dans '%(page)s'."
 
-#: handlers.py:359
+#: handlers.py:360
 #, python-format
 msgid "No hyperlink '%(link)s' added in '%(page)s'."
 msgstr "Aucun hyperlien '%(link)s' ajouté dans '%(page)s'."
 
-#: handlers.py:395
+#: handlers.py:396
 #, python-format
 msgid "Add hyperlink(s) for '%(link)s'"
 msgstr "Hyperlien(s) ajouté pour '%(link)s'"
@@ -109,12 +109,16 @@ msgstr "Votre pseudo sur le wiki"
 msgid "Your wikimedia family"
 msgstr "Votre famille de wikimedia"
 
-#: validators.py:11
+#: models.py:51
+msgid "user"
+msgstr ""
+
+#: validators.py:12
 #, python-format
 msgid "Family %(family)s doesn't exist."
 msgstr "La famille %(family)s n'existe pas."
 
-#: validators.py:17
+#: validators.py:21
 msgid "URL must finish by '/'"
 msgstr "L'URL doit finir par '/'"
 
@@ -130,8 +134,9 @@ msgstr "Choisir"
 msgid "Modify"
 msgstr "Modifier"
 
-#: templates/home.html:16 templates/user_form.html:20
-#: templates/action/add-category.html:6 templates/action/add-hyperlink.html:7
+#: templates/home.html:16 templates/search-span.html:18
+#: templates/user_form.html:20 templates/action/add-category.html:6
+#: templates/action/add-hyperlink.html:7
 msgid "Add"
 msgstr "Ajouter"
 
@@ -151,21 +156,55 @@ msgstr "Editeur"
 msgid "Contributions"
 msgstr "Contributions"
 
-#: templates/result-span.html:9 templates/action/remove-category.html:6
+#: templates/result-span.html:9 templates/search-span.html:19
+#: templates/action/remove-category.html:6
 msgid "Remove"
 msgstr "Enlever"
 
-#: templates/result-span.html:10
+#: templates/result-span.html:10 templates/search-span.html:20
 msgid "Remove all"
 msgstr "Tout enlever"
 
-#: templates/result-span.html:11
+#: templates/result-span.html:11 templates/search-span.html:21
 msgid "Select all"
 msgstr "Tout sélectionner"
 
-#: templates/result-span.html:12
+#: templates/result-span.html:12 templates/search-span.html:23
 msgid "Get links"
 msgstr "Obtenir les liens"
+
+#: templates/search-span.html:3 templates/contrib/index.html:2
+#: templates/editor/index.html:6
+msgid "Search"
+msgstr "Rechercher"
+
+#: templates/search-span.html:5
+msgid "Articles"
+msgstr "Articles"
+
+#: templates/search-span.html:6
+msgid "Categories"
+msgstr "Catégories"
+
+#: templates/search-span.html:7
+msgid "Users' pages"
+msgstr "Pages d'utilisateur"
+
+#: templates/search-span.html:8
+msgid "Templates"
+msgstr "Modèles"
+
+#: templates/search-span.html:9
+msgid "In content of articles"
+msgstr "Dans le contenu des articles"
+
+#: templates/search-span.html:10
+msgid "Page's references"
+msgstr "Références d'une page"
+
+#: templates/search-span.html:22
+msgid "Unselect all"
+msgstr "Tout désélectionner"
 
 #: templates/user_form.html:12
 msgid "Make active"
@@ -262,10 +301,6 @@ msgstr "Supprimer catégorie"
 msgid "Rename category"
 msgstr "Renommer catégorie"
 
-#: templates/contrib/index.html:2 templates/editor/index.html:6
-msgid "Search"
-msgstr "Rechercher"
-
 #: templates/editor/index.html:5
 msgid "Page name"
 msgstr "Nom de page"
@@ -290,52 +325,52 @@ msgstr "Edition mineure"
 msgid "View"
 msgstr "Visualiser"
 
-#: views/actions.py:72
+#: views/actions.py:75
 msgid "Renaming in progress."
 msgstr "Renommage en cours."
 
-#: views/actions.py:92
+#: views/actions.py:96
 #, python-format
 msgid "'%(page)s' exists."
 msgstr "'%(page)s' existe."
 
-#: views/actions.py:95
+#: views/actions.py:99
 #, python-format
 msgid "'%(page)s' not found."
 msgstr "'%(page)s' non trouvé."
 
-#: views/actions.py:111
+#: views/actions.py:116
 msgid "Category adding in progress."
 msgstr "Ajout de catégorie en cours."
 
-#: views/actions.py:131
+#: views/actions.py:137
 msgid "Category moving in progress."
 msgstr "Déplacement de catégorie en cours."
 
-#: views/actions.py:135
+#: views/actions.py:141
 msgid "Category moving finished."
 msgstr "Déplacement de catégorie terminé."
 
-#: views/actions.py:150
+#: views/actions.py:157
 msgid "Category removing in progress."
 msgstr "Enlèvement de catégorie terminé."
 
-#: views/actions.py:155
+#: views/actions.py:162
 msgid "Category removing finished."
 msgstr "Enlèvement de catégorie terminé."
 
-#: views/actions.py:173
+#: views/actions.py:181
 msgid "Hyperlinks adding in progress."
 msgstr "Ajout d'hyperliens en cours."
 
-#: views/actions.py:193
+#: views/actions.py:202
 msgid "Text subsitution in progress"
 msgstr "Substitution de texte en cours."
 
-#: views/actions.py:212
+#: views/actions.py:222
 msgid "Hyperlinks"
 msgstr "Hyperliens"
 
-#: views/editor.py:33
+#: views/editor.py:35
 msgid "Publication done."
 msgstr "Publication effectuée."
