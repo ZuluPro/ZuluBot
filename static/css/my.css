@@ -9,5 +9,30 @@ body {
 }
 
 .editor {
-  font-family:Menlo,Monaco,Consolas,"Courier New",monospace
+  font-family: Menlo,Monaco,Consolas,"Courier New",monospace
+}
+
+.alert a {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.alert a:hover {
+  text-decoration: none;
+}
+
+.alert-info a {
+  color: #3A87AD;
+}
+
+.alert-warning a {
+  color: #C09853;
+}
+
+.alert-error a {
+  color: #B94A48;
+}
+
+.alert-success a {
+  color: #468847;
 }
