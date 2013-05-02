@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from core.utils import method_restricted_to, is_ajax
 from core.handlers import wiki_handler
 
+
 @is_ajax()
 @method_restricted_to('GET')
 def get_page_text(request):
@@ -21,6 +22,7 @@ def get_page_text(request):
         page_text = ''
     return HttpResponse(page_text)
 
+
 @is_ajax()
 @method_restricted_to('POST')
 def put_page_text(request):
@@ -32,5 +34,5 @@ def put_page_text(request):
     page.put(request.POST['text'], request.POST['comment'])
     messages.add_message(request, messages.SUCCESS, _("Publication done."))
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages': messages.get_messages(request),
     })

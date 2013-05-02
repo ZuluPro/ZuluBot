@@ -4,6 +4,7 @@ from wikipedia import Page
 from core.handlers import wiki_handler
 w = wiki_handler()
 
+
 class add_category_TestCase(unittest.TestCase):
 
     def setUp(self):

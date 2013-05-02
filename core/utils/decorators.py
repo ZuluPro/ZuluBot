@@ -1,6 +1,7 @@
 from django.http import Http404
 from django.conf import settings
 
+
 class method_restricted_to(object):
     """
     Restrict view to the given list of method.
@@ -15,8 +16,9 @@ class method_restricted_to(object):
                 return f(request, *args)
             else:
                 raise Http404
-            
+
         return wrapped_f
+
 
 class is_ajax(object):
     """
@@ -29,5 +31,5 @@ class is_ajax(object):
                 raise Http404
             else:
                 return f(request, *args)
-            
+
         return wrapped_f

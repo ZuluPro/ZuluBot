@@ -16,6 +16,7 @@ from core.views import CELERY_IS_ACTIVE
 from core.utils import method_restricted_to, is_ajax
 from core.handlers import wiki_handler
 
+
 @is_ajax()
 @method_restricted_to('GET')
 def search_page(request):
@@ -28,19 +29,20 @@ def search_page(request):
     """
     w = wiki_handler()
     # By default search in words
-    if request.GET.get('type','content') == 'content':
+    if request.GET.get('type', 'content') == 'content':
         results = [ p for p in w.search_words(request.GET['q']) ]
     elif request.GET['type'] == 'references':
         page = w.get_page(request.GET['q'])
         results = page.getReferences()
     # Else search by namespace and name
     else:
-        results = [ p for p in \
-            w.search_in_title(request.GET['q'], namespaces=request.GET.get('type',None)) ]
-    
+        results = [ p for p in
+            w.search_in_title(request.GET['q'], namespaces=request.GET.get('type', None)) ]
+
     return render(request, 'option.html', {
-        'pages':results,
+        'pages': results,
     })
+
 
 @is_ajax()
 @method_restricted_to('POST')
@@ -53,8 +55,9 @@ def move_page(request):
     w.move_page(request.POST['from'], request.POST['to'])
     messages.add_message(request, messages.INFO, 'Action en cours.')
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages': messages.get_messages(request),
     })
+
 
 @is_ajax()
 @method_restricted_to('POST')
@@ -67,7 +70,7 @@ def move_pages(request):
     are more than one page to rename.
     """
     pages = request.POST.getlist('pages[]')
-    if len(pages) > 1 and CELERY_IS_ACTIVE :
+    if len(pages) > 1 and CELERY_IS_ACTIVE:
         async_move_pages.delay(pages, request.POST['pat'], request.POST['repl'], request.POST['redirect'])
         messages.add_message(request, messages.INFO, _('Renaming in progress.'))
         msgs = messages.get_messages(request)
@@ -77,8 +80,9 @@ def move_pages(request):
         msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
-        'messages':msgs,
+        'messages': msgs,
     })
+
 
 @is_ajax()
 @method_restricted_to('GET')
@@ -89,15 +93,16 @@ def check_page(request):
     w = wiki_handler()
     p = w.get_page(request.GET['page'])
     if p.exists():
-        messages.add_message(request, messages.SUCCESS, _("'%(page)s' exists.") % \
-          {'page':p.title()})
+        messages.add_message(request, messages.SUCCESS, _("'%(page)s' exists.") %
+          {'page': p.title()})
     else:
-        messages.add_message(request, messages.WARNING, _("'%(page)s' not found.") % \
-          {'page':p.title()})
+        messages.add_message(request, messages.WARNING, _("'%(page)s' not found.") %
+          {'page': p.title()})
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages': messages.get_messages(request),
     })
-    
+
+
 @is_ajax()
 @method_restricted_to('POST')
 def add_category(request):
@@ -106,7 +111,7 @@ def add_category(request):
     This view use Celery if it's actived.
     """
     pages = request.POST.getlist('pages[]')
-    if CELERY_IS_ACTIVE :
+    if CELERY_IS_ACTIVE:
         async_add_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, _('Category adding in progress.'))
         msgs = messages.get_messages(request)
@@ -116,8 +121,9 @@ def add_category(request):
         msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
-        'messages':msgs,
+        'messages': msgs,
     })
+
 
 @is_ajax()
 @method_restricted_to('POST')
@@ -126,7 +132,7 @@ def move_category(request):
     Rename category.
     This view use Celery if it's actived.
     """
-    if CELERY_IS_ACTIVE :
+    if CELERY_IS_ACTIVE:
         async_move_category.delay(request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, _('Category moving in progress.'))
     else:
@@ -134,8 +140,9 @@ def move_category(request):
         w.move_category(request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, _('Category moving finished.'))
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages': messages.get_messages(request),
     })
+
 
 @is_ajax()
 @method_restricted_to('POST')
@@ -145,7 +152,7 @@ def remove_category(request):
     This view use Celery if it's actived.
     """
     pages = request.POST.getlist('pages[]')
-    if CELERY_IS_ACTIVE :
+    if CELERY_IS_ACTIVE:
         async_remove_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, _('Category removing in progress.'))
         msgs = messages.get_messages(request)
@@ -156,8 +163,9 @@ def remove_category(request):
         msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages': messages.get_messages(request),
     })
+
 
 @is_ajax()
 @method_restricted_to('POST')
@@ -168,7 +176,7 @@ def add_internal_link(request):
     This view use Celery if it's actived.
     """
     pages = request.POST.getlist('pages[]')
-    if CELERY_IS_ACTIVE :
+    if CELERY_IS_ACTIVE:
         async_add_internal_link.delay(pages, request.POST['link'], request.POST['link_text'])
         messages.add_message(request, messages.INFO, _('Hyperlinks adding in progress.'))
     else:
@@ -177,8 +185,9 @@ def add_internal_link(request):
         msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages': messages.get_messages(request),
     })
+
 
 @is_ajax()
 @method_restricted_to('POST')
@@ -188,7 +197,7 @@ def sub(request):
     This view use Celery if it's actived.
     """
     pages = request.POST.getlist('pages[]')
-    if CELERY_IS_ACTIVE :
+    if CELERY_IS_ACTIVE:
         async_sub.delay(pages, request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, _('Text subsitution in progress'))
     else:
@@ -197,8 +206,9 @@ def sub(request):
         msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages': messages.get_messages(request),
     })
+
 
 @is_ajax()
 @method_restricted_to('GET')
@@ -212,8 +222,9 @@ def get_page_links(request):
     msgs = results.make_messages(request, header=_('Hyperlinks'))
 
     return render(request, 'base/messages.html', {
-        'messages':msgs,
+        'messages': msgs,
     })
+
 
 @is_ajax()
 @method_restricted_to('GET')
@@ -226,16 +237,15 @@ def get_finished_tasks(request):
     if not CELERY_IS_ACTIVE:
         raise Http404
     # Extract Celery result
-    task_results = [ t.result  for t in TaskMeta.objects.all() ]
+    task_results = [ t.result for t in TaskMeta.objects.all() ]
     # Create list messages objects
     msgs_groups = [ t.make_messages(request) for t in task_results ]
     # Delete finished task
-    [ t.delete()  for t in TaskMeta.objects.filter(status='SUCCESS') ]
+    [ t.delete() for t in TaskMeta.objects.filter(status='SUCCESS') ]
 
     msgs = []
     for group in msgs_groups:
         msgs += [ m for m in group ]
     return render(request, 'base/messages.html', {
-        'messages':msgs
+        'messages': msgs
     })
-

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-import wikipedia, catlib, userlib, pagegenerators
+import wikipedia, catlib, userlib
+from pagegenerators import SearchPageGenerator, AllpagesPageGenerator
 
 from core.utils import Task_Result
 from core.models import Wiki_User
@@ -20,15 +21,15 @@ class wiki_handler(object):
         self.nick = self.dbuser.nick
         self.language = self.dbuser.language
         self.family = self.dbuser.family
-        self.site = wikipedia.getSite(self.language,self.family)
-        self.user = userlib.User(self.site,self.nick)
+        self.site = wikipedia.getSite(self.language, self.family)
+        self.user = userlib.User(self.site, self.nick)
 
     def get_all(self, namespace=None):
         """
         Return all Pages objects as iterator.
         """
-        pages = pagegenerators.AllpagesPageGenerator(namespace=namespace, includeredirects=False)
-        for i,p in enumerate(pages):
+        pages = AllpagesPageGenerator(namespace=namespace, includeredirects=False)
+        for i, p in enumerate(pages):
             if i >= 499:
                 break
             try:
@@ -41,14 +42,14 @@ class wiki_handler(object):
         Get all Pages containing the given words.
         A namespace filter is available.
         """
-        return pagegenerators.SearchPageGenerator(key, number=0, namespaces=namespaces)
+        return SearchPageGenerator(key, number=0, namespaces=namespaces)
 
     def get_references(self, page, number=50):
         """
         Return page's reference as iterator.
         """
         page = self.get_page(page)
-        for i,p in enumerate(page.getReferences()):
+        for i, p in enumerate(page.getReferences()):
             if i >= number:
                 break
             yield p
@@ -57,10 +58,10 @@ class wiki_handler(object):
         """
         Get pages which title matching with given key.
         """
-		# Not usable in big wiki
+        # Not usable in big wiki
         # regex = re.compile(key, re.I)
         pages = self.site.search(key, 50, namespaces)
-        for page in pages :
+        for page in pages:
             yield page[0]
 
     def get_page(self, page):
@@ -71,7 +72,7 @@ class wiki_handler(object):
             pass
         elif isinstance(page, basestring):
             page = wikipedia.Page(self.site, page)
-        return page 
+        return page
 
     def delete_page(self, page):
         """
@@ -94,22 +95,22 @@ class wiki_handler(object):
         try:
             new_page.put(
                 newtext=old_page.get(),
-                comment=_("Move '%(old_page)s' to '%(new_page)s'") % \
-                    {'old_page':old_page.title(), 'new_page':new_page.title()},
+                comment=_("Move '%(old_page)s' to '%(new_page)s'") %
+                    {'old_page': old_page.title(), 'new_page': new_page.title()},
                 minorEdit=False,
             )
-        except wikipedia.IsRedirectPage :
+        except wikipedia.IsRedirectPage:
             pass
-        except wikipedia.NoPage :
+        except wikipedia.NoPage:
             pass
         else:
-            if redirect :
+            if redirect:
                 old_page.put(
                     newtext=self.REDIRECT % new_page.title(),
-                    comment=u'D\xe9placement de %s vers %s' % (old_page.title(),new_page.title()),
+                    comment=u'D\xe9placement de %s vers %s' % (old_page.title(), new_page.title()),
                     minorEdit=False,
                 )
-            else :
+            else:
                 self.delete_page(old_page)
 
     def move_pages(self, pages, pat, rep, redirect=False):
@@ -117,7 +118,7 @@ class wiki_handler(object):
         Rename a list of pages with pattern replacement.
         """
         # Format pages arg
-        if not isinstance(pages, (tuple,list)) :
+        if not isinstance(pages, (tuple, list)):
             pages = (pages,)
         else:
             pages = list(set(pages))
@@ -129,24 +130,24 @@ class wiki_handler(object):
         for p in pages:
             try:
                 old_page = self.get_page(p)
-                old_html_link = self.get_wiki_url(old_page,True)
-                new_page = self.get_page(re.sub(pat,rep,p.title()))
-                new_html_link = self.get_wiki_url(new_page,True)
-                if old_page != new_page :
+                old_html_link = self.get_wiki_url(old_page, True)
+                new_page = self.get_page(re.sub(pat, rep, p.title()))
+                new_html_link = self.get_wiki_url(new_page, True)
+                if old_page != new_page:
                     self.move_page(old_page, new_page, redirect)
                     # Format success message
                     msg = (SUCCESS % {
-                      'old_page':old_page.title() + old_html_link,
-                      'new_page':new_page.title() + new_html_link
+                        'old_page': old_page.title() + old_html_link,
+                        'new_page': new_page.title() + new_html_link
                     })
-                    results.add_result('success',msg)
+                    results.add_result('success', msg)
                 else:
-                    msg = WARNING % {'page':old_page.title()}
-                    results.add_result('warning',msg)
+                    msg = WARNING % {'page': old_page.title()}
+                    results.add_result('warning', msg)
 
             except:
-                msg = ERROR % {'old_page':old_page.title(), 'new_page':new_page.title()}
-                results.add_result('error',msg)
+                msg = ERROR % {'old_page': old_page.title(), 'new_page': new_page.title()}
+                results.add_result('error', msg)
 
         return results
 
@@ -166,14 +167,14 @@ class wiki_handler(object):
         """
         Add a category to a list of page's name.
         Work if pages list is a single pagename.
-        
+
         A Task_result object can be give this method
         for follow several task.
         """
         # TODO
         ## Find a better way to find category
         # Format pages arg
-        if not isinstance(pages, (tuple,list)) :
+        if not isinstance(pages, (tuple, list)):
             pages = (pages,)
         else:
             pages = list(set(pages))
@@ -183,32 +184,32 @@ class wiki_handler(object):
         results = results or Task_Result()
         SUCCESS = _(u"'%(category)s' add in '%(page)s'.")
         WARNING = _(u"'%(category)s' already in '%(page)s'.")
-        for p in pages :
+        for p in pages:
             p = self.get_page(p)
-            html_link = self.get_wiki_url(p,True)
-            try :
+            html_link = self.get_wiki_url(p, True)
+            try:
                 old_text = p.get()
             # Do not touch redirect pages
             except wikipedia.IsRedirectPage as e:
                 results.add_result('error', e.message)
-            else :
+            else:
                 # Cat is already present
-                if re.search((u'\[\[%s\]\]' % category.title()) , old_text) :
-                    msg = (WARNING % \
-                      {'category':category.title(), 'page':p.title()+html_link})
+                if re.search((u'\[\[%s\]\]' % category.title()), old_text):
+                    msg = (WARNING %
+                            {'category': category.title(), 'page': p.title()+html_link})
                     results.add_result('warning', msg)
                 else:
                     # Search if a category zone is present
                     s = re.search('\[\[Cat.gor(ie|y):[^\]]*\]\]', old_text)
-                    if s :
-                        new_text = old_text[:s.end()]+ (u'\n[[%s]]' % \
-                                category.title()) +old_text[s.end():]
-                    else :
+                    if s:
+                        new_text = old_text[:s.end()] + (u'\n[[%s]]' %
+                                category.title()) + old_text[s.end():]
+                    else:
                         new_text = old_text+(u'\n[[%s]]' % category.title())
                     p.put(new_text, comment=(u'+[[%s]]' % category.title()))
-                    msg = SUCCESS % {'category':category.title(), 'page':p.title()+html_link}
-                    results.add_result('success',msg)
-        return results 
+                    msg = SUCCESS % {'category': category.title(), 'page': p.title()+html_link}
+                    results.add_result('success', msg)
+        return results
 
     def delete_category(self, category, results=None):
         """
@@ -223,23 +224,23 @@ class wiki_handler(object):
             prompt=False,
             mark=True
         )
-        html_link = self.get_wiki_url(category,True)
-        msg = _("'%(page)s' deleted %(link)s") % {'page':category.title(), 'link':html_link}
-        results.add_result('success',msg)
-        return results 
+        html_link = self.get_wiki_url(category, True)
+        msg = _("'%(page)s' deleted %(link)s") % {'page': category.title(), 'link': html_link}
+        results.add_result('success', msg)
+        return results
 
     def remove_category(self, pages, category, results=None):
         """
         Remove a category to a list of page's name.
         Work if pages list is a single pagename.
-        
+
         A Task_result object can be give this method
         for follow several task.
         """
         # TODO
         # Compile regex
         # Format pages arg
-        if not isinstance(pages, (tuple,list)) :
+        if not isinstance(pages, (tuple, list)):
             pages = (pages,)
         else:
             pages = list(set(pages))
@@ -249,19 +250,19 @@ class wiki_handler(object):
         results = results or Task_Result()
         SUCCESS = _("'%(category)s' remove from '%(page)s'.")
         WARNING = _("'%(category)s' not found in '%(page)s'.")
-        for p in pages :
+        for p in pages:
             p = self.get_page(p)
-            html_link = self.get_wiki_url(p,True)
+            html_link = self.get_wiki_url(p, True)
             old_text = p.get()
             if re.search((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), old_text):
                 new_text = re.sub((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), '', old_text)
                 p.put(new_text, comment=(u'-[[%s]]' % category.title()))
-                msg = SUCCESS % {'category':category.title(), 'page':p.title()+html_link}
-                results.add_result('success',msg)
+                msg = SUCCESS % {'category': category.title(), 'page': p.title()+html_link}
+                results.add_result('success', msg)
             else:
                 msg = WARNING % (category.title(), p.title()+html_link)
-                results.add_result('warning',msg)
-        return results 
+                results.add_result('warning', msg)
+        return results
 
     def move_category(self, old, new):
         """
@@ -275,21 +276,21 @@ class wiki_handler(object):
         new_cat = self.get_category(new)
         results = Task_Result()
 
-		# Use self method to remove and add categories
+        # Use self method to remove and add categories
         pages = old_cat.articlesList()
         results = self.remove_category([ p.title() for p in pages ], old_cat.title(), results)
         results = self.add_category([ p.title() for p in pages ], new_cat.title(), results)
 
-        # Move 
-        if not new_cat.exists() and old_cat.exists() :
+        # Move
+        if not new_cat.exists() and old_cat.exists():
             msg = _("Move '%(old_page)s' to '%(new_page)s'") % \
-                {'old_page':old_cat.title(), 'new_page':new_cat.title()+html_link}
+                {'old_page': old_cat.title(), 'new_page': new_cat.title()+html_link}
             new_cat.put(
                 newtext=old_cat.get(),
                 comment=msg,
                 minorEdit=False
             )
-            results.add_result('success',msg)
+            results.add_result('success', msg)
             self.delete_category(old_cat.title())
         return results
 
@@ -310,7 +311,7 @@ class wiki_handler(object):
         Make a simple string replacement on list of page.
         """
         # Format pages arg
-        if not isinstance(pages, (tuple,list)) :
+        if not isinstance(pages, (tuple, list)):
             pages = (pages,)
         else:
             pages = list(set(pages))
@@ -319,20 +320,20 @@ class wiki_handler(object):
         for page in pages:
             page = self.get_page(page)
             old_text = page.get()
-            new_text = old_text.replace(pat,repl)
-            if new_text != old_text :
+            new_text = old_text.replace(pat, repl)
+            if new_text != old_text:
                 page.put(
                     newtext=new_text,
-					comment=_("Subsitution from '%(pat)s' to '%(repl)s'") % \
-                      {'pat':pat,'repl':repl},
+                    comment=_("Subsitution from '%(pat)s' to '%(repl)s'") %
+                        {'pat': pat, 'repl': repl},
                 )
                 msg = _("Subsitution from '%(pat)s' to '%(repl)s' in '%(page)s' terminated with success") % \
-						{'pat':pat, 'repl':repl, 'page':page.title()}
-                results.add_result('success',msg)
+                        {'pat': pat, 'repl': repl, 'page': page.title()}
+                results.add_result('success', msg)
             else:
                 msg = _("No occurence of '%(pat)s' found in '%(page)s'") % \
-                  {'pat':pat, 'page':page.title()}
-                results.add_result('warning',msg)
+                    {'pat': pat, 'page': page.title()}
+                results.add_result('warning', msg)
         return results
 
     def add_internal_link(self, pages, link, link_text=''):
@@ -340,7 +341,7 @@ class wiki_handler(object):
         Add internal link to the list of page.
         """
         # Format pages arg
-        if not isinstance(pages, (tuple,list)) :
+        if not isinstance(pages, (tuple, list)):
             pages = (pages,)
         else:
             pages = list(set(pages))
@@ -358,7 +359,7 @@ class wiki_handler(object):
         SUCCESS = _("Hyperlink(s) '%(link)s' added in '%(page)s'.")
         WARNING = _("No hyperlink '%(link)s' added in '%(page)s'.")
         for page in pages:
-            html_link = self.get_wiki_url(page,True)
+            html_link = self.get_wiki_url(page, True)
             page = self.get_page(page)
             old_text = page.get()
             # Walk in text with the key ofr step
@@ -381,7 +382,7 @@ class wiki_handler(object):
                         if not link_text:
                             new_text += ('[[%s]]' % link)
                         else:
-                            new_text += ('[[%s|%s]]' % (link,link_test))
+                            new_text += ('[[%s|%s]]' % (link, link_test))
                         count = 5
                     # Decrement count
                     else:
@@ -389,19 +390,19 @@ class wiki_handler(object):
                         count -= 1
 
             # Put page only if modified
-            if new_text != old_text :
+            if new_text != old_text:
                 page.put(
                     newtext=new_text,
-					comment=_("Add hyperlink(s) for '%(link)s'") % {'link':link},
+                    comment=_("Add hyperlink(s) for '%(link)s'") % {'link': link},
                 )
-                msg = SUCCESS % {'link':link, 'page':page.title()}
-                results.add_result('success',msg)
+                msg = SUCCESS % {'link': link, 'page': page.title()}
+                results.add_result('success', msg)
             else:
-                msg = WARNING % {'link':link, 'page':page.title()}
-                results.add_result('warning',msg)
+                msg = WARNING % {'link': link, 'page': page.title()}
+                results.add_result('warning', msg)
             return results
 
-    def get_contrib(self,number=25,page=1,namespace=[]):
+    def get_contrib(self, number=25, page=1, namespace=[]):
         """
         A generator of user contributions.
         Usable with pages and limit number.
@@ -413,14 +414,14 @@ class wiki_handler(object):
             raise ValueError('Bad limit number.')
         else:
             # Set range
-            start,end = number*page-number,number*page
+            start, end = number*page-number, number*page
 
         # Yield only contribs in range
         precontribs = self.user.contributions(limit=end, namespace=namespace)
-        for (i,(wpage,id,date,comment)) in enumerate(precontribs) :
-            if i < start or i > end :
+        for (i, (wpage, id, date, comment)) in enumerate(precontribs):
+            if i < start or i > end:
                 continue
-            yield (wpage,id,datetime.strptime(str(date),'%Y%m%d%H%M%S'),comment)
+            yield (wpage, id, datetime.strptime(str(date), '%Y%m%d%H%M%S'), comment)
 
     def get_wiki_url(self, page, htmlize=False):
         """
@@ -442,19 +443,19 @@ class wiki_handler(object):
         """
         HTML_EDTOR_LINK = u'<a class="goto-editor" page="%s"><i class="icon-edit"></i></a>'
         # Format pages arg
-        if not isinstance(pages, (tuple,list)) :
+        if not isinstance(pages, (tuple, list)):
             pages = (pages,)
 
         results = Task_Result()
         for p in pages:
             p = self.get_page(p)
             data = {
-              'url':self.get_wiki_url(p),
-              'title':p.title(),
-			  'editor': HTML_EDTOR_LINK % p.title()
+                'url': self.get_wiki_url(p),
+                'title': p.title(),
+                'editor': HTML_EDTOR_LINK % p.title()
             }
             msg = u'%(editor)s  <a href="%(url)s">%(title)s</a>' % (data)
-            results.add_result('info',msg)
+            results.add_result('info', msg)
         return results
 
     def get_template(self, template):
@@ -463,5 +464,3 @@ class wiki_handler(object):
         """
         template = wikipedia.Page(self.site, template, defaultNamespace=10)
         return template
-
-

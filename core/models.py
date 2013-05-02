@@ -9,7 +9,7 @@ class Wiki_Active_User_Manager(models.Manager):
     Shorcuts Manager for handle active user.
     """
     def get_active(self):
-	try:
+        try:
             return self.get_query_set().get(active=True)
         except Wiki_User.DoesNotExist as e:
             raise Wiki_User.NoActiveUser
@@ -38,16 +38,17 @@ class Wiki_User(models.Model):
     family = models.CharField(max_length=50, help_text=_('Your wikimedia family'), validators=[validate_family])
     language = models.CharField(max_length=10)
     url = models.CharField(max_length=200, help_text='index.php URL', validators=[validate_url])
-    comment = models.CharField(max_length=1000,null=True, blank=True)
+    comment = models.CharField(max_length=1000, null=True, blank=True)
     active = models.BooleanField(default=False)
 
     activated = Wiki_Active_User_Manager()
     objects = models.Manager()
+
     class Meta:
         app_label = 'core'
-        ordering = ('active','nick')
-        unique_together = [('nick','family','language')]
-        verbose_name = 'utilisateur'
+        ordering = ('active', 'nick')
+        unique_together = [('nick', 'family', 'language')]
+        verbose_name = _('user')
 
     class NoActiveUser(Exception):
         """No active user found in database."""
@@ -68,24 +69,24 @@ class Wiki_User(models.Model):
         self.active = True
         self.save()
 
-    def save(self,*args,**kwargs):
-       """
-       This method is overided for set all users unactived
-       if the one saved is active.
-       """
-       if self.active:
-           Wiki_User.objects.exclude(id=self.id).update(active=False)
-       super(Wiki_User, self).save(*args,**kwargs)
+    def save(self, *args, **kwargs):
+        """
+        This method is overided for set all users unactived
+        if the one saved is active.
+        """
+        if self.active:
+            Wiki_User.objects.exclude(id=self.id).update(active=False)
+        super(Wiki_User, self).save(*args, **kwargs)
 
 
 class Wiki_User_Form(forms.ModelForm):
     class Meta:
         model = Wiki_User
         widgets = {
-           'nick': forms.TextInput(attrs={'class':'span3','placeholder':'Nick'}),
-           'family': forms.TextInput(attrs={'class':'span2','placeholder':'Family'}),
-           'language': forms.TextInput(attrs={'class':'span1','placeholder':'Language'}),
-           'url': forms.TextInput(attrs={'class':'span6','placeholder':'Wiki index'}),
-           'comment': forms.Textarea(attrs={'class':'span6','placeholder':'Comment'}),
-           'active': forms.CheckboxInput(attrs={}),
+            'nick': forms.TextInput(attrs={'class': 'span3', 'placeholder': 'Nick'}),
+            'family': forms.TextInput(attrs={'class': 'span2', 'placeholder': 'Family'}),
+            'language': forms.TextInput(attrs={'class': 'span1', 'placeholder': 'Language'}),
+            'url': forms.TextInput(attrs={'class': 'span6', 'placeholder': 'Wiki index'}),
+            'comment': forms.Textarea(attrs={'class': 'span6', 'placeholder': 'Comment'}),
+            'active': forms.CheckboxInput(attrs={}),
         }

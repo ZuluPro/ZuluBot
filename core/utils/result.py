@@ -1,30 +1,31 @@
 from django.contrib import messages
 
+
 class Task_Result(dict):
     """
     Object for manipulate ZuluBot's method result.
     """
-    TAGS = dict([ (v,k) for k,v in messages.DEFAULT_TAGS.items() ])
+    TAGS = dict([ (v, k) for k, v in messages.DEFAULT_TAGS.items() ])
     STATUS = TAGS.keys()
 
     def __init__(self, **kwargs):
         super(Task_Result, self).__init__()
-        self.success_msg = kwargs.get('success_msg','')
-        self.info_msg = kwargs.get('info_msg','')
-        self.warning_msg = kwargs.get('warning_msg','')
-        self.error_msg = kwargs.get('error_msg','')
+        self.success_msg = kwargs.get('success_msg', '')
+        self.info_msg = kwargs.get('info_msg', '')
+        self.warning_msg = kwargs.get('warning_msg', '')
+        self.error_msg = kwargs.get('error_msg', '')
         # Set result list
         [ self.__setitem__(s, []) for s in self.STATUS ]
         # Set a dict for HTML strings
-        self.pre_messages = dict([ (s,'') for s in self.STATUS ])
-        
-    def add_result(self,status,msg):
+        self.pre_messages = dict([ (s, '') for s in self.STATUS ])
+
+    def add_result(self, status, msg):
         """
         A shortcut to add result in list.
         """
         self[status].append(msg)
 
-    def htmlize(self,status,header=''):
+    def htmlize(self, status, header=''):
         """
         Convert results into one string.
         HTML is an unstyled unordered list like below:
@@ -48,7 +49,7 @@ class Task_Result(dict):
         """
         # Set dict of string which will contain HTML
         for status in self.TAGS:
-            if self[status] :
+            if self[status]:
                 self.htmlize(status, header)
                 # Create messages with HTML results
                 messages.add_message(request, self.TAGS[status], self.pre_messages[status])

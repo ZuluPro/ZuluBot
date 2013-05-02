@@ -3,12 +3,13 @@
 
 import family
 
+
 class Family(family.Family):
     def __init__(self):
         family.Family.__init__(self)
         self.name = '{{ opts.family }}'
         self.langs = {
-          '{{ opts.language }}': '{{ opts.family }}',
+            '{{ opts.language }}': '{{ opts.family }}',
         }
 
     def version(self, code):
