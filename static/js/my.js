@@ -55,20 +55,7 @@ $(document).on('click', '#btn-delete-pages', function() {
 /// ACTIONS FOR SELECTED PAGES
 // CHECK IF CATEGORY EXISTS
 $(document).on('click', '.btn-check-page', function() {
-    var target = $(this).parent().parent();
-    var pagename = $( '#'+$(this).attr('rel') ).val()
-    if ( pagename ) {
-      if ( $(this).hasClass('btn-check-category') ) {
-        pagename = 'Catégorie:'+pagename
-      }
-      if ( pagename.length ) {
-        $.ajax({url:'/check_page', data:{page:pagename}, async:true,
-          success: function(data, status, xhr) {
-            $(target).append(data);
-          },
-        });
-      }
-    }
+cree
 });
 
 // RENAME PAGES
@@ -100,6 +87,22 @@ $(document).on('click', '#btn-add-category', function() {
               //$('#pages').empty();
               //$('#category-to-add').val('');
               $('#div-action-add-category').append(data);
+          },
+      });
+    }
+});
+
+// REMOVE CATEGORY
+$(document).on('click', '#btn-remove-category', function() {
+    if ( $('#category-to-remove').val().length ) {
+      $.ajax({type:'POST', url:'/remove_category', async:true,
+          data:{
+              pages:$('#pages').val(),
+              category:'Catégorie:'+$('#category-to-remove').val(),
+              csrfmiddlewaretoken:csrf
+          },
+          success: function(data, status, xhr) {
+              $('#div-action-remove-category').append(data);
           },
       });
     }

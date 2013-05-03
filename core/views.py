@@ -5,7 +5,7 @@ from django.conf import settings
 from djcelery.models import TaskMeta
 
 from core.tasks import async_move_pages, async_add_category, async_move_category, \
-        async_add_internal_link
+        async_remove_category, async_add_internal_link, async_sub
 from core.utils import make_messages
 from zulubot.handlers import wiki_handler
 w = wiki_handler()
@@ -85,14 +85,14 @@ def move_category(request):
         'messages':messages.get_messages(request),
     })
 
-def remove_catgory(request):
+def remove_category(request):
     pages = request.POST.getlist('pages[]')
     if 'djcelery' in settings.INSTALLED_APPS :
-        async_remove_category_from.delay(pages, request.POST['category'])
+        async_remove_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'Suppression de cat\xe9gorie en cours.')
         msgs = messages.get_messages(request)
     else:
-        w.remove_category_from(pages, request.POST['category'])
+        w.remove_category(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
         msgs = make_messages(request, results)
 

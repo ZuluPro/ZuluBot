@@ -125,6 +125,7 @@ LOGGING = {
     }
 }
 
+CELERY_IMPORTS = ('core.tasks',)
 import sys
 sys.path.append('/usr/local/lib/python2.7/dist-packages/pywikipedia')
 from settings_local import *

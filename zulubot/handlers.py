@@ -184,7 +184,7 @@ class wiki_handler(object):
         results['success'].append([p,msg])
         return results 
 
-    def remove_category_from(self, pages, category):
+    def remove_category(self, pages, category):
         """
         Remove a category to a list of page's name.
         Work if pages list is a single pagename.
@@ -197,14 +197,22 @@ class wiki_handler(object):
         # Format category arg
         category = self.get_category(category)
 
-        SUCCESS = u'Cat\xe9gorie "%s" supprim\xe9e de "%s".'
+        SUCCESS = u'"%s" supprim\xe9e de "%s".'
+        WARNING = u'"%s" non trouv\xe9e dans "%s".'
         results = {'error':[],'success':[],'warning':[]}
         for p in pages :
             p = self.get_page(p)
-            new_text = p.get().replace((u'[[%s]]' % category.title()), '')
-            p.put(new_text, comment=(u'-[[%s]]' % category.title()))
-            msg = SUCCESS % (category.title(), p.title())
-            results['success'].append([p,msg])
+            old_text = p.get()
+            if re.search((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), old_text):
+                new_text = re.sub((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), '', old_text)
+                #new_text = p.get().replace((u'[[%s]]' % category.title()), '')
+                p.put(new_text, comment=(u'-[[%s]]' % category.title()))
+                msg = SUCCESS % (category.title(), p.title())
+                results['success'].append([p,msg])
+            else:
+                msg = WARNING % (category.title(), p.title())
+                results['warning'].append([p,msg])
+
         return results 
 
     def move_category(self, old, new):
