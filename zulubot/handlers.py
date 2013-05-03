@@ -260,10 +260,10 @@ class wiki_handler(object):
                     newtext=new_text,
                     comment=u"Subsitution de '%s' vers '%s'" % (pat,repl),
                 )
-                msg = "Subsitution de '%s' vers '%s' dans '%s' avec succ\xe8s" % (pat, repl, page.title())
+                msg = u"Subsitution de '%s' vers '%s' dans '%s' avec succ\xe8s" % (pat, repl, page.title())
                 results['success'].append([page,msg])
             else:
-                msg = "Aucune occurence de '%s' dans '%s'" % (pat, page.title())
+                msg = u"Aucune occurence de '%s' dans '%s'" % (pat, page.title())
                 results['warning'].append([page,msg])
         return results
 

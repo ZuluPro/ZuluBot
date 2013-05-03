@@ -62,7 +62,7 @@ def check_page(request):
     
 def add_category(request):
     pages = request.POST.getlist('pages[]')
-    if len(pages) > 3 and 'djcelery' in settings.INSTALLED_APPS :
+    if 'djcelery' in settings.INSTALLED_APPS :
         async_add_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'Ajout de cat\xe9gorie en cours.')
         msgs = messages.get_messages(request)
@@ -102,11 +102,24 @@ def remove_catgory(request):
 
 def add_internal_link(request):
     pages = request.POST.getlist('pages[]')
-    if not 'djcelery' in settings.INSTALLED_APPS :
+    if 'djcelery' in settings.INSTALLED_APPS :
         async_add_internal_link.delay(pages, request.POST['link'], request.POST['link_text'])
         messages.add_message(request, messages.INFO, u"Ajout d'hyperliens en cours.")
     else:
         results = w.add_internal_link(pages, request.POST['link'], request.POST['link_text'])
+        msgs = make_messages(request, results)
+
+    return render(request, 'base/messages.html', {
+        'messages':messages.get_messages(request),
+    })
+
+def sub(request):
+    pages = request.POST.getlist('pages[]')
+    if 'djcelery' in settings.INSTALLED_APPS :
+        async_sub.delay(pages, request.POST['from'], request.POST['to'])
+        messages.add_message(request, messages.INFO, u"Subtitution de texte en cours.")
+    else:
+        results = w.sub(pages, request.POST['from'], request.POST['to'])
         msgs = make_messages(request, results)
 
     return render(request, 'base/messages.html', {
