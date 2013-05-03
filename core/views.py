@@ -6,15 +6,18 @@ from djcelery.models import TaskMeta
 
 from core.tasks import async_move_pages, async_add_category, async_move_category, \
         async_remove_category, async_add_internal_link, async_sub
-from core.utils import make_messages
+from core.utils import make_messages, method_restricted_to, is_ajax
 from zulubot.handlers import wiki_handler
 w = wiki_handler()
 
+@method_restricted_to('GET')
 def index(request):
     return render(request, 'index.html', {
         'title':'ZuluBot',
     })
 
+@is_ajax()
+@method_restricted_to('GET')
 def search_page(request):
     if request.GET.get('type','content') == 'content':
         results = [ p for p in w.search_words(request.GET['q']) ]
@@ -26,6 +29,8 @@ def search_page(request):
         'pages':results,
     })
 
+@is_ajax()
+@method_restricted_to('POST')
 def move_page(request):
     w.move_page(request.POST['from'], request.POST['to'])
     messages.add_message(request, messages.INFO, 'Action en cours.',
@@ -34,6 +39,8 @@ def move_page(request):
         'messages':messages.get_messages(request),
     })
 
+@is_ajax()
+@method_restricted_to('POST')
 def move_pages(request):
     pages = request.POST.getlist('pages[]')
     if len(pages) > 0 and 'djcelery' in settings.INSTALLED_APPS :
@@ -48,18 +55,20 @@ def move_pages(request):
         'messages':msgs,
     })
 
+@is_ajax()
+@method_restricted_to('POST')
 def check_page(request):
     p = w.get_page(request.GET['page'])
     if p.exists():
-        messages.add_message(request, messages.SUCCESS, 'Correcte.',
-                                     fail_silently=True)
+        messages.add_message(request, messages.SUCCESS, 'Correcte.')
     else:
-        messages.add_message(request, messages.WARNING, 'Introuvable.',
-                                     fail_silently=True)
+        messages.add_message(request, messages.WARNING, 'Introuvable.')
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
     
+@is_ajax()
+@method_restricted_to('POST')
 def add_category(request):
     pages = request.POST.getlist('pages[]')
     if 'djcelery' in settings.INSTALLED_APPS :
@@ -74,6 +83,8 @@ def add_category(request):
         'messages':msgs,
     })
 
+@is_ajax()
+@method_restricted_to('POST')
 def move_category(request):
     if 'djcelery' in settings.INSTALLED_APPS :
         async_move_category.delay(request.POST['from'], request.POST['to'])
@@ -85,6 +96,8 @@ def move_category(request):
         'messages':messages.get_messages(request),
     })
 
+@is_ajax()
+@method_restricted_to('POST')
 def remove_category(request):
     pages = request.POST.getlist('pages[]')
     if 'djcelery' in settings.INSTALLED_APPS :
@@ -100,6 +113,8 @@ def remove_category(request):
         'messages':messages.get_messages(request),
     })
 
+@is_ajax()
+@method_restricted_to('POST')
 def add_internal_link(request):
     pages = request.POST.getlist('pages[]')
     if 'djcelery' in settings.INSTALLED_APPS :
@@ -113,6 +128,8 @@ def add_internal_link(request):
         'messages':messages.get_messages(request),
     })
 
+@is_ajax()
+@method_restricted_to('POST')
 def sub(request):
     pages = request.POST.getlist('pages[]')
     if 'djcelery' in settings.INSTALLED_APPS :
@@ -126,6 +143,8 @@ def sub(request):
         'messages':messages.get_messages(request),
     })
 
+@is_ajax()
+@method_restricted_to('GET')
 def get_finished_tasks(request):
     results = [ t.result  for t in TaskMeta.objects.all() ]
     [ t.delete()  for t in TaskMeta.objects.filter(status='SUCCESS') ]
