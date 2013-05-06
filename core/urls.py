@@ -29,4 +29,6 @@ urlpatterns = patterns('',
     url(r'^check_page$', 'core.views.check_page', name='check page'),
     url(r'^get_page_links$', 'core.views.get_page_links', name='get page links'),
     url(r'^get_finished_tasks$', 'core.views.get_finished_tasks', name='Finished tasks'),
+
+    url(r'^apropos$', 'core.views.apropos', name='apropos'),
 )

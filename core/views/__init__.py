@@ -8,7 +8,7 @@ if 'djcelery' in settings.INSTALLED_APPS:
 else:
     CELERY_IS_ACTIVE = False
 
-from views import index, search_contrib
+from views import index, search_contrib, apropos
 from actions import search_page, move_page, move_pages, check_page, add_category, \
         move_category, remove_category, add_internal_link, sub, get_finished_tasks, \
         get_page_links

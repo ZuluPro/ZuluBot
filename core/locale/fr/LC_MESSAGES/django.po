@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 23:35+0200\n"
+"POT-Creation-Date: 2013-05-06 21:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Anthony MONTHE <montheanthony@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,6 +121,10 @@ msgstr "La famille %(family)s n'existe pas."
 #: validators.py:21
 msgid "URL must finish by '/'"
 msgstr "L'URL doit finir par '/'"
+
+#: templates/apropos.html:13
+msgid "Close"
+msgstr "Fermer"
 
 #: templates/home.html:6
 msgid "No configured user."

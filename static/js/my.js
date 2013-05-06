@@ -405,3 +405,16 @@ $(document).on('click', '#btn-choose-wikiuser', function() {
 	}
   });
 });
+
+// GET APROPOS
+$(document).on('click', '[href="/apropos"]', function() {
+  $.ajax({type:'GET', url:'/apropos', async:true,
+    success: function(data, status, xhr) {
+      $('#myModal').html(data);
+	},
+	complete: function() {
+	  $('#myModal').modal('toggle');
+	},
+  });
+  return false;
+});

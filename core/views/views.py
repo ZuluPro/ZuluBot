@@ -42,3 +42,13 @@ def search_contrib(request):
     return render(request, 'contrib/li.html', {
         'crontribs': contribs,
     })
+
+
+@method_restricted_to('GET')
+def apropos(request):
+    from django.conf import settings
+    with open(settings.BASEDIR+'/../LICENSE') as license_file:
+        license = license_file.read()
+    return render(request, 'apropos.html', {
+        'license': license,
+    })
