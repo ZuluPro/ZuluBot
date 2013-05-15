@@ -172,15 +172,17 @@ $(document).on('click', '#btn-sub', function() {
 
 
 // INFINITE LOOP FOR ASYNC TASKS
+      if ( CELERY_IS_ACTIVE ) {
 window.onload = function start() {
     get_finished_tasks();
 }
+      }
 function get_finished_tasks() {
     window.setInterval(function () {
-      $.ajax({type:'GET', url:'/get_finished_tasks', async:true,
+        $.ajax({type:'GET', url:'/get_finished_tasks', async:true,
           success: function(data, status, xhr) {
-              $('#action-msg-box').append(data);
+            $('#action-msg-box').append(data);
           },
-      });
+        });
     }, 10000);
 }

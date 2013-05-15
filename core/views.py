@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
@@ -151,6 +152,8 @@ def sub(request):
 @is_ajax()
 @method_restricted_to('GET')
 def get_finished_tasks(request):
+    if not CELERY_IS_ACTIVE:
+        raise Http404
     results = [ t.result  for t in TaskMeta.objects.all() ]
     [ t.delete()  for t in TaskMeta.objects.filter(status='SUCCESS') ]
     return render(request, 'base/messages.html', {

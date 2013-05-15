@@ -1,9 +1,16 @@
 from django.utils import unittest
+from django.conf import settings
 from wikipedia import Page
 from zulubot.handlers import wiki_handler
 w = wiki_handler()
 
-class get_page_TestCase(unittest.TestCase):
+class add_category_TestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.base_text = w.get_page().get()
+
+    def tearDown(self):
+        pass
 
     def get_by_name(self):
         p = w.get_page('Accueil')
