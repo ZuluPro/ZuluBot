@@ -1,4 +1,5 @@
 from django.conf import settings
+from core.utils import Task_Result
 import wikipedia, catlib, userlib, pagegenerators
 import re
 
@@ -94,7 +95,7 @@ class wiki_handler(object):
         else:
             pages = list(set(pages))
 
-        results = {'error':[],'success':[],'warning':[]}
+        results = Task_Result()
         ERROR = u'D\xe9placement de "%s" vers "%s" \xe9chou\xe9'
         SUCCESS = u'"%s" d\xe9plac\xe9 vers "%s"'
         WARNING = u'Pas de modification sur "%s"'
@@ -105,14 +106,14 @@ class wiki_handler(object):
                 if old_page != new_page :
                     self.move_page(old_page, new_page, redirect)
                     msg = SUCCESS % (old_page.title(), new_page.title())
-                    results['success'].append([p,msg])
+                    results.add_result('success',msg)
                 else:
                     msg = WARNING % old_page.title()
-                    results['warning'].append([p,msg])
+                    results.add_result('warning',msg)
 
             except:
                 msg = ERROR % (old_page.title(), new_page.title())
-                results['error'].append([p,msg])
+                results.add_result('error'],msg)
 
         return results
 
@@ -141,22 +142,21 @@ class wiki_handler(object):
         # Format category arg
         category = self.get_category(category)
 
-        results = {'error':[],'success':[],'warning':[]}
+        results = Task_Result()
         SUCCESS = u'"%s" ajout\xe9e \xe0 "%s".'
         WARNING = u'"%s" d\xe9j\xe0 pr\xe9sente dans "%s".'
         for p in pages :
             p = self.get_page(p)
             try :
                 old_text = p.get()
-
             # Do not touch redirect pages
             except wikipedia.IsRedirectPage as e:
-                results['error'].append([p,e])
+                results.add_result('error', e.message)
             else :
                 # Cat is already present
                 if re.search((u'\[\[%s\]\]' % category.title()) , old_text) :
                     msg = WARNING % (category.title(), p.title())
-                    results['warning'].append([p,msg])
+                    results.add_result('warning', msg)
                 else:
                     # Search if a category zone is present
                     s = re.search('\[\[Cat.gorie:[^\]]*\]\]', old_text)
@@ -167,21 +167,23 @@ class wiki_handler(object):
                         new_text = old_text+(u'\n[[%s]]' % category.title())
                     p.put(new_text, comment=(u'+[[%s]]' % category.title()))
                     msg = SUCCESS % (category.title(), p.title())
-                    results['success'].append([p,msg])
+                    results.add_result('success',msg)
         return results 
 
     def delete_category(self, category):
         """
         Delete a category.
         """
-        results = {'error':[],'success':[],'warning':[]}
+        # TODO
+        # Exception : Page already deleted
+        results = Task_Result()
         self.get_category(category).delete(
             reason='-Suppression',
             prompt=False,
             mark=True
         )
         msg = u'Cat\xe9gorie "%s" supprim\xe9e.' % (category.title(), p.title())
-        results['success'].append([p,msg])
+        results.add_result('success',msg)
         return results 
 
     def remove_category(self, pages, category):
@@ -189,6 +191,8 @@ class wiki_handler(object):
         Remove a category to a list of page's name.
         Work if pages list is a single pagename.
         """
+        # TODO
+        # Compile regex
         # Format pages arg
         if not isinstance(pages, (tuple,list)) :
             pages = (pages,)
@@ -197,22 +201,20 @@ class wiki_handler(object):
         # Format category arg
         category = self.get_category(category)
 
+        results = Task_Result()
         SUCCESS = u'"%s" supprim\xe9e de "%s".'
         WARNING = u'"%s" non trouv\xe9e dans "%s".'
-        results = {'error':[],'success':[],'warning':[]}
         for p in pages :
             p = self.get_page(p)
             old_text = p.get()
             if re.search((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), old_text):
                 new_text = re.sub((r"\[\[%s(\|[^\]]*)?]\]" % category.title()), '', old_text)
-                #new_text = p.get().replace((u'[[%s]]' % category.title()), '')
                 p.put(new_text, comment=(u'-[[%s]]' % category.title()))
                 msg = SUCCESS % (category.title(), p.title())
-                results['success'].append([p,msg])
+                results.add_result('success',msg)
             else:
                 msg = WARNING % (category.title(), p.title())
-                results['warning'].append([p,msg])
-
+                results.add_result('warning',msg)
         return results 
 
     def move_category(self, old, new):
@@ -221,20 +223,25 @@ class wiki_handler(object):
         Delete the old category.
         If new doesn't exits put the text of old one.
         """
+        # TODO
+        # Add lire cases
         old_cat = self.get_category(old)
         new_cat = self.get_category(new)
         pages = old_cat.articlesList()
         self.remove_category_from([ p.title() for p in pages ], old_cat.title()) 
         self.add_category([ p.title() for p in pages ], new_cat.title) 
 
-        results = {'error':[],'success':[],'warning':[]} 
+        results = Task_Result()
         if not new_cat.exists() and old_cat.exists() :
             new_cat.put(
                 newtext=old_cat.get(),
                 comment=u'D\xe9placement de %s vers %s' % (old_cat.title(),new_cat.title()),
                 minorEdit=False,
             )
-        self.delete_category(old_cat.title())
+            msg = u'D\xe9placement de %s vers %s termin\xe9.' % (old_cat.title(),new_cat.title())
+            results.add_result('success',msg)
+            self.delete_category(old_cat.title())
+        return results
 
     def get_user(self, user):
         """
@@ -258,7 +265,7 @@ class wiki_handler(object):
         else:
             pages = list(set(pages))
 
-        results = {'error':[],'success':[],'warning':[]} 
+        results = Task_Result()
         for page in pages:
             page = self.get_page(page)
             old_text = page.get()
@@ -269,10 +276,10 @@ class wiki_handler(object):
                     comment=u"Subsitution de '%s' vers '%s'" % (pat,repl),
                 )
                 msg = u"Subsitution de '%s' vers '%s' dans '%s' avec succ\xe8s" % (pat, repl, page.title())
-                results['success'].append([page,msg])
+                results.add_result('success',msg)
             else:
                 msg = u"Aucune occurence de '%s' dans '%s'" % (pat, page.title())
-                results['warning'].append([page,msg])
+                results.add_result('warning',msg)
         return results
 
     def add_internal_link(self, pages, link, link_text=''):
@@ -294,9 +301,9 @@ class wiki_handler(object):
             re.compile(r"http://\S*$"),
         )
 
+        results = Task_Result()
         SUCCESS = u'Hyperlien(s) "%s" ajout\xe9(s) sur "%s".'
         WARNING = u'Aucun hyperlien "%s" ajout\xe9(s) sur "%s".'
-        results = {'error':[],'success':[],'warning':[]} 
         for page in pages:
             page = self.get_page(page)
             old_text = page.get()
@@ -334,8 +341,8 @@ class wiki_handler(object):
                     comment=u"Ajout d'hyperliens pour '%s'" % link,
                 )
                 msg = SUCCESS % (link, page.title())
-                results['success'].append([page,msg])
+                results.add_result('success',msg)
             else:
                 msg = WARNING % (link, page.title())
-                results['warning'].append([page,msg])
+                results.add_result('warning',msg)
             return results

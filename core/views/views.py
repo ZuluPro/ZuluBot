@@ -11,7 +11,7 @@ if 'djcelery' in settings.INSTALLED_APPS:
 else:
 	CELERY_IS_ACTIVE = False
 
-from core.utils import make_messages, method_restricted_to, is_ajax
+from core.utils import method_restricted_to, is_ajax
 from core.handlers import wiki_handler
 w = wiki_handler()
 
@@ -55,7 +55,7 @@ def move_pages(request):
         msgs = messages.get_messages(request)
     else:
         results = w.move_pages(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
-        msgs = make_messages(request, results)
+        msgs = result.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':msgs,
@@ -81,9 +81,10 @@ def add_category(request):
         async_add_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'Ajout de cat\xe9gorie en cours.')
         msgs = messages.get_messages(request)
+        print [ str(i) for i in msgs ]
     else:
         results = w.add_category(pages, request.POST['category'])
-        msgs = make_messages(request, results)
+        msgs = result.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':msgs,
@@ -113,7 +114,7 @@ def remove_category(request):
     else:
         w.remove_category(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
-        msgs = make_messages(request, results)
+        msgs = result.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
@@ -128,7 +129,7 @@ def add_internal_link(request):
         messages.add_message(request, messages.INFO, u"Ajout d'hyperliens en cours.")
     else:
         results = w.add_internal_link(pages, request.POST['link'], request.POST['link_text'])
-        msgs = make_messages(request, results)
+        msgs = result.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
@@ -143,7 +144,7 @@ def sub(request):
         messages.add_message(request, messages.INFO, u"Subtitution de texte en cours.")
     else:
         results = w.sub(pages, request.POST['from'], request.POST['to'])
-        msgs = make_messages(request, results)
+        msgs = result.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
@@ -154,8 +155,12 @@ def sub(request):
 def get_finished_tasks(request):
     if not CELERY_IS_ACTIVE:
         raise Http404
-    results = [ t.result  for t in TaskMeta.objects.all() ]
+    task_results = [ t.result  for t in TaskMeta.objects.all() ]
+    msgs_groups = [ t.make_messages(request) for t in task_results ]
     [ t.delete()  for t in TaskMeta.objects.filter(status='SUCCESS') ]
+    msgs = []
+    for group in msgs_groups:
+        msgs += [ m for m in group ]
     return render(request, 'base/messages.html', {
-        'messages':make_messages(request, results),
+        'messages':msgs
     })
