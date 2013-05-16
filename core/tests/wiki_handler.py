@@ -1,7 +1,7 @@
 from django.utils import unittest
 from django.conf import settings
 from wikipedia import Page
-from zulubot.handlers import wiki_handler
+from core.handlers import wiki_handler
 w = wiki_handler()
 
 class add_category_TestCase(unittest.TestCase):
