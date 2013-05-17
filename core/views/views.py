@@ -19,6 +19,9 @@ w = wiki_handler()
 def index(request):
     return render(request, 'index.html', {
         'title':'ZuluBot',
+        'user':w.user,
+        'site':w.site,
+        'contribs':w.get_contrib(),
 		'CELERY_IS_ACTIVE':CELERY_IS_ACTIVE
     })
 

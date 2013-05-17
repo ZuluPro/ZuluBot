@@ -1,6 +1,7 @@
 from django.conf import settings
 from core.utils import Task_Result
 import wikipedia, catlib, userlib, pagegenerators
+from datetime import datetime
 import re
 
 class wiki_handler(object):
@@ -10,9 +11,11 @@ class wiki_handler(object):
     REDIRECT = '#REDIRECTION [[%s]]'
 
     def __init__(self):
+        self.nick = settings.WIKI['nick']
         self.language = settings.WIKI['language']
         self.family = settings.WIKI['family']
         self.site = wikipedia.getSite(self.language,self.family)
+        self.user = userlib.User(self.site,self.nick)
 
     def get_all(self, namespace=None):
         """
@@ -113,7 +116,7 @@ class wiki_handler(object):
 
             except:
                 msg = ERROR % (old_page.title(), new_page.title())
-                results.add_result('error'],msg)
+                results.add_result('error',msg)
 
         return results
 
@@ -346,3 +349,24 @@ class wiki_handler(object):
                 msg = WARNING % (link, page.title())
                 results.add_result('warning',msg)
             return results
+
+    def get_contrib(self,number=50,page=1,namespace=[]):
+        """
+        A generator of user contributions.
+        Usable with pages and limit number.
+        """
+        # Check args before
+        if not page:
+            raise ValueError('Bad page number.')
+        elif not number:
+            raise ValueError('Bad limit number.')
+        else:
+            # Set range
+            start,end = number*page-number,number*page
+
+        # Yield only contribs in range
+        precontribs = self.user.contributions(limit=end, namespace=namespace)
+        for (i,(wpage,id,date,comment)) in enumerate(precontribs) :
+            if i < start or i > end :
+                continue
+            yield (wpage,id,datetime.strptime(str(date),'%Y%m%d%H%M%S'),comment)
