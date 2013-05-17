@@ -186,3 +186,15 @@ function get_finished_tasks() {
         });
     }, 10000);
 }
+
+// SEARCH CONTRIBUTIONS
+$(document).on('keypress', '#contrib_q', function(e) {
+    if (e.which == 13 && $(this).val().length ) {
+    $.ajax({url:'/search_contribution', async:true,
+        data:{q:$(this).val()},
+        success: function(data, status, xhr) {
+            $('#contribs').html(data);
+        },
+    });
+    }
+});

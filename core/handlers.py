@@ -350,7 +350,7 @@ class wiki_handler(object):
                 results.add_result('warning',msg)
             return results
 
-    def get_contrib(self,number=50,page=1,namespace=[]):
+    def get_contrib(self,number=25,page=1,namespace=[]):
         """
         A generator of user contributions.
         Usable with pages and limit number.

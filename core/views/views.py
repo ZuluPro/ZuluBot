@@ -25,6 +25,16 @@ def index(request):
 		'CELERY_IS_ACTIVE':CELERY_IS_ACTIVE
     })
 
+#@is_ajax()
+@method_restricted_to('GET')
+def search_contrib(request):
+    contribs = w.get_contrib()
+    if request.GET.get('q',''):
+        contribs = [ (p,i,d,c) for p,i,d,c in contribs if request.GET['q'] in p.title() ]
+    return render(request, 'contrib/li.html', {
+        'crontribs':contribs,
+    })
+
 @is_ajax()
 @method_restricted_to('GET')
 def search_page(request):
