@@ -1,5 +1,6 @@
 from django.conf import settings
 from core.utils import Task_Result
+from core.models import Wiki_User
 import wikipedia, catlib, userlib, pagegenerators
 from datetime import datetime
 import re
@@ -11,9 +12,10 @@ class wiki_handler(object):
     REDIRECT = '#REDIRECTION [[%s]]'
 
     def __init__(self):
-        self.nick = settings.WIKI['nick']
-        self.language = settings.WIKI['language']
-        self.family = settings.WIKI['family']
+        self.dbuser = Wiki_User.activated.get()
+        self.nick = self.dbuser.nick
+        self.language = self.dbuser.language
+        self.family = self.dbuser.family
         self.site = wikipedia.getSite(self.language,self.family)
         self.user = userlib.User(self.site,self.nick)
 
