@@ -10,7 +10,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql' or 'oracle'.
-        'NAME': '/tmp/zulubot.db',
+        'NAME': '/home/amonthe/zulubot.db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',

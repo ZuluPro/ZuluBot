@@ -1,1 +1,35 @@
-<h3>{{ user.username }} sur <a href="{{ site.siteinfo.base }}">{{ site.siteinfo.sitename }}</a></h3>
+{% if w.dbuser.id %}
+ <h3>{{ user.username }} sur <a href="{{ site.siteinfo.base }}">{{ site.siteinfo.sitename }}</a></h3>
+{% else %}
+ <div class="span5">
+  <h3>Aucun utilisateur configuré</h3>
+  <ul class="unstyled">
+   {% for U in Users %}
+   <li>
+    <label class="checkbox">
+     <input class="input user-checkbox" type="checkbox" value="{{ U.id }}">
+     {{ U }} - {{ U.family }}
+    </label>
+    </li>
+   </ul>
+  {% endfor %}
+  <div class="btn-group">
+   <button class="btn btn-primary" id="choose-wikiuser">Choisir</button>
+   <button class="btn" id="add-wikiuser">Ajouter</button>
+  </div>
+ </div>
+
+ <div class="span6">
+  <div class="controls controls-row">
+   <input id="form-nick" class="input span3" type="text" placeholder="Nick">
+   <input id="form-family" class="input span2" type="text" placeholder="Family">
+   <input id="form-language" class="input span1" type="text" placeholder="Language">
+  </div>
+  <textarea id="form-comment" class="span6" placeholder="Commentaire"></textarea>
+  <label class="checkbox">
+   <input id="form-active" class="input" type="checkbox">
+   Rendre actif
+   <button class="pull-right btn btn-primary">Sauvegarder</button>
+  </label>
+ </div>
+{% endif %}

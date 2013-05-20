@@ -11,6 +11,7 @@ if 'djcelery' in settings.INSTALLED_APPS:
 else:
 	CELERY_IS_ACTIVE = False
 
+from core.models import Wiki_User, Wiki_User_Form
 from core.utils import method_restricted_to, is_ajax
 from core.handlers import wiki_handler
 w = wiki_handler()
@@ -19,9 +20,10 @@ w = wiki_handler()
 def index(request):
     return render(request, 'index.html', {
         'title':'ZuluBot',
-        'user':w.user,
-        'site':w.site,
+        'w_handler':w,
+        'wiki_user_form':Wiki_User_Form(),
         'contribs':w.get_contrib(),
+        'Users':Wiki_User.objects.all(),
 		'CELERY_IS_ACTIVE':CELERY_IS_ACTIVE
     })
 
