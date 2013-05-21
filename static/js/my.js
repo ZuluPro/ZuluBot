@@ -1,5 +1,5 @@
 // MESSAGES
-var print_message= function(msg,tag,into) {
+var print_message = function(msg,tag,into) {
   var html = '<div id="msg-'+tag+'" class="alert alert-'+tag+'" style="display: block;"><p class="pull-right"><button class="close" onclick="$(this).parent().parent().hide(250)">×</button></p><div>'+msg+'</div></div>';
   $(into).prepend(html);
 }
@@ -234,6 +234,92 @@ $(document).on('click', '#btn-publish-editor', function() {
 	},
     success: function(data, status, xhr) {
       $('#editor-messages').prepend(data);
+	}
+  });
+});
+
+// GET REGISTERED USER FORM
+$(document).on('click', '#btn-get-wikiuser', function() {
+  $.ajax({type:'GET', url:'/get_user', async:true,
+    data:{id:$('input[name="user-chosen"]:checked').val()},
+    success: function(data, status, xhr) {
+      $('#user-form').html(data);
+	}
+  });
+});
+//
+// GET NOT REGISTERED USER FORM
+$(document).on('click', '#btn-get-form-wikiuser', function() {
+  $.ajax({type:'GET', url:'/get_user', async:true,
+    success: function(data, status, xhr) {
+      $('#user-form').html(data);
+	}
+  });
+});
+
+// ADD USER
+$(document).on('click', '#btn-add-wikiuser', function() {
+  $.ajax({type:'POST', url:'/add_user', async:true,
+    data:{
+	  nick:$('#id_nick').val(),
+	  family:$('#id_family').val(),
+	  language:$('#id_language').val(),
+	  url:$('#id_url').val(),
+	  comment:$('#id_comment').val(),
+	  active:($('#id_active:checked').val() || 'off'),
+      csrfmiddlewaretoken:csrf
+	},
+    success: function(data, status, xhr) {
+      $('#user-form-messages').prepend(data);
+	}
+  });
+});
+
+// UPDATE USER
+$(document).on('click', '#btn-update-wikiuser', function() {
+  $.ajax({type:'POST', url:'/update_user', async:true,
+    data:{
+	  id:$('#id_id').val(),
+	  nick:$('#id_nick').val(),
+	  family:$('#id_family').val(),
+	  language:$('#id_language').val(),
+	  url:$('#id_url').val(),
+	  comment:$('#id_comment').val(),
+	  active:($('#id_active:checked').val() || 'off'),
+      csrfmiddlewaretoken:csrf
+	},
+    success: function(data, status, xhr) {
+      $('#user-form-messages').prepend(data);
+	}
+  });
+});
+
+// DELETE USER
+$(document).on('click', '#btn-delete-wikiuser', function() {
+  $.ajax({type:'POST', url:'/delete_user', async:true,
+    data:{
+	  id:$('#id_id').val(),
+      csrfmiddlewaretoken:csrf
+	},
+    success: function(data, status, xhr) {
+      $('#user-list').html(data);
+      $('#btn-get-form-wikiuser').click();
+      print_message('Utilisateur supprimé.','error','#user-messages');
+	}
+  });
+});
+
+// CHOOSE USER
+$(document).on('click', '#btn-choose-wikiuser', function() {
+  $.ajax({type:'POST', url:'/set_active_user', async:true,
+    data:{
+      id:$('#user-chosen:checked').val(),
+	  active:'on',
+      csrfmiddlewaretoken:csrf
+	},
+    success: function(data, status, xhr) {
+      $('#user-messages').prepend(data);
+      setTimeout(window.location.reload, 3000);
 	}
   });
 });

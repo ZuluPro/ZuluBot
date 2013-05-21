@@ -1,5 +1,8 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django import forms
+
+from wikipedia import Family
 
 class Wiki_Active_User_Manager(models.Manager):
     """
@@ -9,16 +12,16 @@ class Wiki_Active_User_Manager(models.Manager):
         return self.get_query_set().get(active=True)
 
     def nick(self):
-        self.get_active().nick
+        return self.get_active().nick
 
     def family(self):
-        self.get_active().family
+        return self.get_active().family
 
     def language(self):
-        self.get_active().language
+        return self.get_active().language
 
     def url(self):
-        self.get_active().url
+        return self.get_active().url
 
 
 class Wiki_User(models.Model):
@@ -27,11 +30,6 @@ class Wiki_User(models.Model):
     """
     # TODO
     # Add validator for '/' in end of url
-    activated = Wiki_Active_User_Manager()
-    objects = models.Manager()
-    class Meta:
-        app_label = 'core'
-        ordering = ('active','nick')
 
     nick = models.CharField(max_length=100, help_text='Your id on wiki')
     family = models.CharField(max_length=50, help_text='Your wikimedia family')
@@ -40,15 +38,28 @@ class Wiki_User(models.Model):
     comment = models.CharField(max_length=1000,null=True, blank=True)
     active = models.BooleanField(default=False)
 
+    activated = Wiki_Active_User_Manager()
+    objects = models.Manager()
+    class Meta:
+        app_label = 'core'
+        ordering = ('active','nick')
+
     def __unicode__(self):
         return self.nick
+
+    def validate_family(value):
+        Family(value)
+
+    def validate_url(value):
+        if not value.endswith('/'):
+            raise ValidationError("URL must finish by '/'")
 
     def set_active(self):
         """
         Set current user as active.
         There is only one active user.
         """
-        Wiki_User.objects.update(active=False)
+        Wiki_User.objects.exclude(id=self.id).update(active=False)
         self.active = True
         self.save()
 
@@ -65,3 +76,11 @@ class Wiki_User(models.Model):
 class Wiki_User_Form(forms.ModelForm):
     class Meta:
         model = Wiki_User
+        widgets = {
+           'nick': forms.TextInput(attrs={'class':'span3','placeholder':'Nick'}),
+           'family': forms.TextInput(attrs={'class':'span2','placeholder':'Family'}),
+           'language': forms.TextInput(attrs={'class':'span1','placeholder':'Language'}),
+           'url': forms.TextInput(attrs={'class':'span6','placeholder':'Wiki index'}),
+           'comment': forms.Textarea(attrs={'class':'span6','placeholder':'Comment'}),
+           'active': forms.CheckboxInput(attrs={}),
+        }

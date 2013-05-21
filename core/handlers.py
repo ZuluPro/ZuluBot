@@ -12,7 +12,7 @@ class wiki_handler(object):
     REDIRECT = '#REDIRECTION [[%s]]'
 
     def __init__(self):
-        self.dbuser = Wiki_User.activated.get()
+        self.dbuser = Wiki_User.activated.get_active()
         self.nick = self.dbuser.nick
         self.language = self.dbuser.language
         self.family = self.dbuser.family

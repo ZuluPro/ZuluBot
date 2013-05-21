@@ -2,6 +2,14 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     url(r'^$', 'core.views.index', name='index'),
+
+    url(r'^add_user$', 'core.views.add_user', name='add user'),
+    url(r'^update_user$', 'core.views.update_user', name='update user'),
+    url(r'^delete_user$', 'core.views.delete_user', name='delete user'),
+    url(r'^get_user$', 'core.views.get_user', name='get user'),
+    url(r'^get_user_list$', 'core.views.get_user_list', name='get user list'),
+    url(r'^set_active_user$', 'core.views.set_active_user', name='set active user'),
+
     url(r'^search_page$', 'core.views.search_page', name='search page'),
     url(r'^move_page$', 'core.views.move_page', name='move page'),
     url(r'^move_pages$', 'core.views.move_pages', name='move pages'),

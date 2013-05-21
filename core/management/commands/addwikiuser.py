@@ -15,15 +15,11 @@ class Command(BaseCommand):
         for opt in 'nick','language','family','url':
             if not options[opt]:
                 options[opt] = raw_input(opt.capitalize()+"> ")
-        try:
-            U = Wiki_User(
-              nick=options['nick'],
-              family=options['family'],
-              language=options['language'],
-              url=options['url'],
-              comment=options['comment']
-            )
-            U.save()
-        except Exception as e:
-            print e.message
-            raise 
+        U = Wiki_User(
+          nick=options['nick'],
+          family=options['family'],
+          language=options['language'],
+          url=options['url'],
+          comment=options['comment']
+        )
+        U.save()

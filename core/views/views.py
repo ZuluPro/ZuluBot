@@ -18,12 +18,15 @@ w = wiki_handler()
 
 @method_restricted_to('GET')
 def index(request):
+    # TODO
+    # Handling wiki ValueError
     return render(request, 'index.html', {
         'title':'ZuluBot',
         'w_handler':w,
         'wiki_user_form':Wiki_User_Form(),
-        'contribs':w.get_contrib(),
+        #'contribs':w.get_contrib(),
         'Users':Wiki_User.objects.all(),
+        'F':Wiki_User_Form(),
 		'CELERY_IS_ACTIVE':CELERY_IS_ACTIVE
     })
 
@@ -54,8 +57,7 @@ def search_page(request):
 @method_restricted_to('POST')
 def move_page(request):
     w.move_page(request.POST['from'], request.POST['to'])
-    messages.add_message(request, messages.INFO, 'Action en cours.',
-                                 fail_silently=True)
+    messages.add_message(request, messages.INFO, 'Action en cours.')
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
@@ -170,9 +172,13 @@ def sub(request):
 def get_finished_tasks(request):
     if not CELERY_IS_ACTIVE:
         raise Http404
+    # Extract Celery result
     task_results = [ t.result  for t in TaskMeta.objects.all() ]
+    # Create list messages objects
     msgs_groups = [ t.make_messages(request) for t in task_results ]
+    # Delete finished task
     [ t.delete()  for t in TaskMeta.objects.filter(status='SUCCESS') ]
+
     msgs = []
     for group in msgs_groups:
         msgs += [ m for m in group ]

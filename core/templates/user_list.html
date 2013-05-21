@@ -1,0 +1,6 @@
+ {% for U in Users %}
+  <label class="radio">
+   <input id="user-chosen" class="input user-checkbox" type="radio" name="user-chosen" value="{{ U.id }}"{% if U.active %} checked{% endif %}>
+   {{ U }} - {{ U.family }}
+  </label>
+{% endfor %}

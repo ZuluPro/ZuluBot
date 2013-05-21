@@ -1,0 +1,22 @@
+<div class="controls controls-row">
+ <input id="id_id" type="hidden" value="{{ F.instance.pk|default_if_none:'' }}">
+ {{ F.nick }}
+ {{ F.family }}
+ {{ F.language }}
+</div>
+{{ F.url }}
+{{ F.comment }}
+<label class="checkbox pull-left">
+ {{ F.active }} Rendre actif
+</label>
+
+<div class="btn-group pull-right">
+{% if F.instance.pk %}
+ <p id="btn-delete-wikiuser" class="btn btn-danger">Supprimer</p>
+ <p id="btn-update-wikiuser" class="btn btn-primary">Sauvegarder</p>
+{% else %}
+ <p id="btn-add-wikiuser" class="pull-right btn btn-primary">Ajouter</p>
+{% endif %}
+</div>
+<hr>
+<div id="user-form-messages"></div>
