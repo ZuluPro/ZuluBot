@@ -5,11 +5,11 @@ from django.conf import settings
 
 from core.utils import method_restricted_to, is_ajax
 from core.handlers import wiki_handler
-w = wiki_handler()
 
 @is_ajax()
 @method_restricted_to('GET')
 def get_page_text(request):
+    w = wiki_handler()
     page = w.get_page(request.GET['q'])
     if page.exists():
         page_text = page.get()
@@ -20,6 +20,7 @@ def get_page_text(request):
 @is_ajax()
 @method_restricted_to('POST')
 def put_page_text(request):
+    w = wiki_handler()
     page = w.get_page(request.POST['page'])
     page.put(request.POST['text'], request.POST['comment'])
     messages.add_message(request, messages.SUCCESS, u"Publication effectu\xe9e.")

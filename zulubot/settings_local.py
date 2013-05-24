@@ -23,5 +23,5 @@ INTERNAL_IPS = ('127.0.0.1','192.168.100.1')
 MIDDLEWARE_CLASSES = settings.MIDDLEWARE_CLASSES+('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
 WIKI = {
-    'path': '/usr/local/lib/python2.7/dist-packages/pywikipedia',
+    'path': '/home/amonthe/projects/pywikipedia-git/pywikipedia',
 }

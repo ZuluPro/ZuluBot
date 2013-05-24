@@ -23,7 +23,14 @@ class wiki_handler(object):
         """
         Return all Pages objects as iterator.
         """
-        return pagegenerators.AllpagesPageGenerator(namespace=namespace)
+        pages = pagegenerators.AllpagesPageGenerator(namespace=namespace, includeredirects=False)
+        for i,p in enumerate(pages):
+            if i >= 499:
+                break
+            try:
+                yield p
+            except KeyError:
+                pass
 
     def search_words(self, key, namespaces=None):
         """
@@ -233,8 +240,8 @@ class wiki_handler(object):
         old_cat = self.get_category(old)
         new_cat = self.get_category(new)
         pages = old_cat.articlesList()
-        self.remove_category_from([ p.title() for p in pages ], old_cat.title()) 
-        self.add_category([ p.title() for p in pages ], new_cat.title) 
+        self.remove_category([ p.title() for p in pages ], old_cat.title()) 
+        self.add_category([ p.title() for p in pages ], new_cat.title()) 
 
         results = Task_Result()
         if not new_cat.exists() and old_cat.exists() :

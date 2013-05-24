@@ -5,7 +5,6 @@ from django.contrib import messages
 from core.models import Wiki_User, Wiki_User_Form
 from core.utils import method_restricted_to, is_ajax, Task_Result
 from core.handlers import wiki_handler
-w = wiki_handler()
 
 @is_ajax()
 @method_restricted_to('POST')

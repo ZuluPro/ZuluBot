@@ -1,8 +1,7 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 from django import forms
+from core.validators import validate_family, validate_url
 
-from wikipedia import Family
 
 class Wiki_Active_User_Manager(models.Manager):
     """
@@ -32,9 +31,9 @@ class Wiki_User(models.Model):
     # Add validator for '/' in end of url
 
     nick = models.CharField(max_length=100, help_text='Your id on wiki')
-    family = models.CharField(max_length=50, help_text='Your wikimedia family')
+    family = models.CharField(max_length=50, help_text='Your wikimedia family', validators=[validate_family])
     language = models.CharField(max_length=3)
-    url = models.CharField(max_length=200, help_text='index.php URL')
+    url = models.CharField(max_length=200, help_text='index.php URL', validators=[validate_url])
     comment = models.CharField(max_length=1000,null=True, blank=True)
     active = models.BooleanField(default=False)
 
@@ -46,13 +45,6 @@ class Wiki_User(models.Model):
 
     def __unicode__(self):
         return self.nick
-
-    def validate_family(value):
-        Family(value)
-
-    def validate_url(value):
-        if not value.endswith('/'):
-            raise ValidationError("URL must finish by '/'")
 
     def set_active(self):
         """

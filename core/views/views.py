@@ -14,15 +14,16 @@ else:
 from core.models import Wiki_User, Wiki_User_Form
 from core.utils import method_restricted_to, is_ajax
 from core.handlers import wiki_handler
-w = wiki_handler()
 
 @method_restricted_to('GET')
 def index(request):
     # TODO
     # Handling wiki ValueError
+    w = wiki_handler()
     return render(request, 'index.html', {
         'title':'ZuluBot',
-        'w_handler':w,
+        'User':Wiki_User.activated.get_active(),
+        'w':w,
         'wiki_user_form':Wiki_User_Form(),
         #'contribs':w.get_contrib(),
         'Users':Wiki_User.objects.all(),
@@ -33,6 +34,7 @@ def index(request):
 #@is_ajax()
 @method_restricted_to('GET')
 def search_contrib(request):
+    w = wiki_handler()
     contribs = w.get_contrib()
     if request.GET.get('q',''):
         contribs = [ (p,i,d,c) for p,i,d,c in contribs if request.GET['q'] in p.title() ]
@@ -43,6 +45,7 @@ def search_contrib(request):
 @is_ajax()
 @method_restricted_to('GET')
 def search_page(request):
+    w = wiki_handler()
     if request.GET.get('type','content') == 'content':
         results = [ p for p in w.search_words(request.GET['q']) ]
     else:
@@ -56,6 +59,7 @@ def search_page(request):
 @is_ajax()
 @method_restricted_to('POST')
 def move_page(request):
+    w = wiki_handler()
     w.move_page(request.POST['from'], request.POST['to'])
     messages.add_message(request, messages.INFO, 'Action en cours.')
     return render(request, 'base/messages.html', {
@@ -71,8 +75,9 @@ def move_pages(request):
         messages.add_message(request, messages.INFO, 'Renommage en cours.')
         msgs = messages.get_messages(request)
     else:
+        w = wiki_handler()
         results = w.move_pages(pages, request.POST['from'], request.POST['to'], request.POST['redirect'])
-        msgs = result.make_messages(request)
+        msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':msgs,
@@ -81,6 +86,7 @@ def move_pages(request):
 @is_ajax()
 @method_restricted_to('GET')
 def check_page(request):
+    w = wiki_handler()
     p = w.get_page(request.GET['page'])
     if p.exists():
         messages.add_message(request, messages.SUCCESS, 'Correcte.')
@@ -100,8 +106,9 @@ def add_category(request):
         msgs = messages.get_messages(request)
         print [ str(i) for i in msgs ]
     else:
+        w = wiki_handler()
         results = w.add_category(pages, request.POST['category'])
-        msgs = result.make_messages(request)
+        msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':msgs,
@@ -114,6 +121,7 @@ def move_category(request):
         async_move_category.delay(request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie en cours.')
     else:
+        w = wiki_handler()
         w.move_category(request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
     return render(request, 'base/messages.html', {
@@ -129,9 +137,10 @@ def remove_category(request):
         messages.add_message(request, messages.INFO, u'Suppression de cat\xe9gorie en cours.')
         msgs = messages.get_messages(request)
     else:
-        w.remove_category(pages, request.POST['category'])
+        w = wiki_handler()
+        results.remove_category(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
-        msgs = result.make_messages(request)
+        msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
@@ -145,8 +154,9 @@ def add_internal_link(request):
         async_add_internal_link.delay(pages, request.POST['link'], request.POST['link_text'])
         messages.add_message(request, messages.INFO, u"Ajout d'hyperliens en cours.")
     else:
+        w = wiki_handler()
         results = w.add_internal_link(pages, request.POST['link'], request.POST['link_text'])
-        msgs = result.make_messages(request)
+        msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
@@ -160,8 +170,9 @@ def sub(request):
         async_sub.delay(pages, request.POST['from'], request.POST['to'])
         messages.add_message(request, messages.INFO, u"Subtitution de texte en cours.")
     else:
+        w = wiki_handler()
         results = w.sub(pages, request.POST['from'], request.POST['to'])
-        msgs = result.make_messages(request)
+        msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),

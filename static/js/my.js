@@ -1,7 +1,12 @@
 // MESSAGES
+// BASIC FUNC
 var print_message = function(msg,tag,into) {
   var html = '<div id="msg-'+tag+'" class="alert alert-'+tag+'" style="display: block;"><p class="pull-right"><button class="close" onclick="$(this).parent().parent().hide(250)">×</button></p><div>'+msg+'</div></div>';
   $(into).prepend(html);
+}
+
+var print_reload = function(into) {
+    print_message("Utilisateur actif modifié.<br>La page va être rechargée.",'warning',into);
 }
 
 // SEARCH PAGE
@@ -128,7 +133,7 @@ $(document).on('click', '#btn-remove-category', function() {
 // MOVE CATEGORY
 $(document).on('click', '#btn-move-category', function() {
     if ( $('#category-move-to').val().length && $('#category-move-from').val().length) {
-      $.ajax({type:'POST', url:'/add_category', async:true,
+      $.ajax({type:'POST', url:'move_category', async:true,
           data:{
               pages:$('#pages').val(), 
               from:'Catégorie:'+$('#category-move-from').val(),
@@ -266,11 +271,21 @@ $(document).on('click', '#btn-add-wikiuser', function() {
 	  language:$('#id_language').val(),
 	  url:$('#id_url').val(),
 	  comment:$('#id_comment').val(),
-	  active:($('#id_active:checked').val() || 'off'),
+	  active:($('#id_active:checked').val() || ''),
       csrfmiddlewaretoken:csrf
 	},
     success: function(data, status, xhr) {
       $('#user-form-messages').prepend(data);
+      if ( $('#id_active:checked').val() || null ) {
+        print_reload('#user-form-messages');
+        setTimeout(window.location.reload, 3000);
+      } else {
+        $.ajax({type:'GET', url:'/get_user_list', async:true,
+          success: function(data, status, xhr) {
+            $('#user-list').html(data);
+	      }
+        })
+     }
 	}
   });
 });
@@ -285,11 +300,15 @@ $(document).on('click', '#btn-update-wikiuser', function() {
 	  language:$('#id_language').val(),
 	  url:$('#id_url').val(),
 	  comment:$('#id_comment').val(),
-	  active:($('#id_active:checked').val() || 'off'),
+	  active:($('#id_active:checked').val() || ''),
       csrfmiddlewaretoken:csrf
 	},
     success: function(data, status, xhr) {
       $('#user-form-messages').prepend(data);
+      if ( $('#id_active:checked').val() || null ) {
+        print_reload('#user-form-messages');
+        setTimeout(window.location.reload, 3000);
+      }
 	}
   });
 });
