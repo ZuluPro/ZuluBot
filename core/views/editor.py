@@ -23,7 +23,9 @@ def put_page_text(request):
     w = wiki_handler()
     page = w.get_page(request.POST['page'])
     page.put(request.POST['text'], request.POST['comment'])
-    messages.add_message(request, messages.SUCCESS, u"Publication effectu\xe9e.")
+
+    page_link = w.get_wiki_url(page,True)
+    messages.add_message(request, messages.SUCCESS, u"Publication effectu\xe9e. %s" % page_link)
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })

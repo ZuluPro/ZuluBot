@@ -1,8 +1,12 @@
+/// BASIC FUNC
 // MESSAGES
-// BASIC FUNC
 var print_message = function(msg,tag,into) {
   var html = '<div id="msg-'+tag+'" class="alert alert-'+tag+'" style="display: block;"><p class="pull-right"><button class="close" onclick="$(this).parent().parent().hide(250)">×</button></p><div>'+msg+'</div></div>';
   $(into).prepend(html);
+}
+
+var print_error = function(into) {
+    print_message("Erreur de communication avec le serveur.",'error',into);
 }
 
 var print_reload = function(into) {
@@ -12,12 +16,13 @@ var print_reload = function(into) {
 // SEARCH PAGE
 $(document).on('keypress', '#page_q', function(e) {
     if (e.which == 13 && $(this).val().length ) {
-    $.ajax({url:'/search_page', async:true,
+      $.ajax({url:'/search_page', async:true,
         data:{q:$(this).val(), type:$('#search-type').val()},
+        error: function() { print_error('#action-msg-box') }, 
         success: function(data, status, xhr) {
             $('#search-pages').html(data);
         },
-    });
+      });
     }
 });
 
@@ -92,6 +97,7 @@ $(document).on('click', '.btn-check-page', function() {
     }
     if ( pagename.length ) {
       $.ajax({url:'/check_page', data:{page:pagename}, async:true,
+        error: function() { print_error('#action-msg-box') }, 
         success: function(data, status, xhr) {
           $(target).append(data);
         },

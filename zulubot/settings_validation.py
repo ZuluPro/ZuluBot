@@ -13,7 +13,7 @@ except IOError:
     print "Supposed credential file: '%s'" % (settings.WIKI['path']+'/user-config.py')
     print "Please configure it before launch django environment.\n"
 
-    if not 'addwikiuser' in argv or not 'deletewikiuser' in argv:
+    if not 'add-wiki-user' in argv or not 'delete-wiki-user' in argv:
         print "You can create file with './manage.py addwikiuser'"
         exit(1)
     else:

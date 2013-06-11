@@ -12,6 +12,8 @@ def search_page(request):
     w = wiki_handler()
     if request.GET.get('type','content') == 'content':
         results = [ p for p in w.search_words(request.GET['q']) ]
+    elif request.GET['type'] == 'category-list':
+        results = w.get_category(request.GET['q']).articles()
     else:
         results = [ p for p in \
             w.search_in_title(request.GET['q'], namespaces=request.GET.get('type',None)) ]
@@ -52,10 +54,11 @@ def move_pages(request):
 def check_page(request):
     w = wiki_handler()
     p = w.get_page(request.GET['page'])
+    page_link = w.get_wiki_url(p,True)
     if p.exists():
-        messages.add_message(request, messages.SUCCESS, 'Correcte.')
+        messages.add_message(request, messages.SUCCESS, u'Correcte. %s' % page_link)
     else:
-        messages.add_message(request, messages.WARNING, 'Introuvable.')
+        messages.add_message(request, messages.WARNING, u'Introuvable. %s' % page_link)
     return render(request, 'base/messages.html', {
         'messages':messages.get_messages(request),
     })
@@ -68,7 +71,6 @@ def add_category(request):
         async_add_category.delay(pages, request.POST['category'])
         messages.add_message(request, messages.INFO, u'Ajout de cat\xe9gorie en cours.')
         msgs = messages.get_messages(request)
-        print [ str(i) for i in msgs ]
     else:
         w = wiki_handler()
         results = w.add_category(pages, request.POST['category'])
@@ -102,12 +104,11 @@ def remove_category(request):
         msgs = messages.get_messages(request)
     else:
         w = wiki_handler()
-        results.remove_category(pages, request.POST['category'])
-        messages.add_message(request, messages.INFO, u'D\xe9placement de cat\xe9gorie termin\xe9.'),
+        results = w.remove_category(pages, request.POST['category'])
         msgs = results.make_messages(request)
 
     return render(request, 'base/messages.html', {
-        'messages':messages.get_messages(request),
+        'messages':msgs,
     })
 
 @is_ajax()
