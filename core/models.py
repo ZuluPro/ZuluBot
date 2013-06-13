@@ -1,5 +1,6 @@
 from django.db import models
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 from core.validators import validate_family, validate_url
 
 
@@ -33,9 +34,9 @@ class Wiki_User(models.Model):
     # TODO
     # Add validator for '/' in end of url
 
-    nick = models.CharField(max_length=100, help_text='Your id on wiki')
-    family = models.CharField(max_length=50, help_text='Your wikimedia family', validators=[validate_family])
-    language = models.CharField(max_length=3)
+    nick = models.CharField(max_length=100, help_text=_('Your nick on wiki'))
+    family = models.CharField(max_length=50, help_text=_('Your wikimedia family'), validators=[validate_family])
+    language = models.CharField(max_length=10)
     url = models.CharField(max_length=200, help_text='index.php URL', validators=[validate_url])
     comment = models.CharField(max_length=1000,null=True, blank=True)
     active = models.BooleanField(default=False)
@@ -45,6 +46,8 @@ class Wiki_User(models.Model):
     class Meta:
         app_label = 'core'
         ordering = ('active','nick')
+        unique_together = [('nick','family','language')]
+        verbose_name = 'utilisateur'
 
     class NoActiveUser(Exception):
         """No active user found in database."""
@@ -52,6 +55,9 @@ class Wiki_User(models.Model):
 
     def __unicode__(self):
         return self.nick
+
+    def full_name(self):
+        return '{nick} - {family} - {language}'.format(**self.__dict__)
 
     def set_active(self):
         """

@@ -1,8 +1,9 @@
+{% load i18n %}
 <div id="div-action-add-hyperlink" style="display: none;">
  <div class="input-append">
-  <input type="text" id="link-to-add" placeholder="Expression à lier"/>
-  <button rel="link-to-add" class="btn btn-check-page">Vérifier</button>
-  <input type="text" id="link-text" placeholder="Texte du lien"/>
-  <button id="btn-add-hyperlink" class="btn btn-primary">Ajouter</button>
+  <input type="text" id="link-to-add" placeholder="{% trans "Expression to link" %}"/>
+  <button rel="link-to-add" class="btn btn-check-page">{% trans "Check" %}</button>
+  <input type="text" id="link-text" placeholder="{% trans "Link text" %}"/>
+  <button id="btn-add-hyperlink" class="btn btn-primary">{% trans "Add" %}</button>
  </div>
 </div>

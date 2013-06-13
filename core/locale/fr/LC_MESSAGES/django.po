@@ -1,0 +1,364 @@
+# ZuluBot French Translation.
+# Copyright (C) 2013
+# This file is distributed under the same license as the ZuluBot package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-13 16:29+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Anthony MONTHE <montheanthony@hotmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: handlers.py:83 handlers.py:222
+msgid "- Deleting"
+msgstr "- Suppression"
+
+#: handlers.py:97 handlers.py:285
+#, python-format
+msgid "Move '%(old_page)s' to '%(new_page)s'"
+msgstr "Déplacement de '%(old_page)s' vers '%(new_page)s'"
+
+#: handlers.py:126
+#, python-format
+msgid "Moving '%(old_page)s' to '%(new_page)s' failed"
+msgstr "Déplacement de '%(old_page)s' vers '%(new_page)s' échoué"
+
+#: handlers.py:127
+#, python-format
+msgid "'%(old_page)s' moved to '%(new_page)s'"
+msgstr "%(old_page)s déplacé vers %(new_page)s"
+
+#: handlers.py:128
+#, python-format
+msgid "No modification to apply to '%(page)s'"
+msgstr "Aucune modification à appliquer sur %(page)s"
+
+#: handlers.py:184
+#, python-format
+msgid "'%(category)s' add in '%(page)s'."
+msgstr "'%(category)s' ajouté dans '%(page)s'."
+
+#: handlers.py:185
+#, python-format
+msgid "'%(category)s' already in '%(page)s'."
+msgstr "'%(category)s' déjà dans '%(page)s'."
+
+#: handlers.py:227
+#, python-format
+msgid "'%(page)s' deleted %(link)s"
+msgstr "'%(page)s' supprimé %(link)s"
+
+#: handlers.py:250
+#, python-format
+msgid "'%(category)s' remove from '%(page)s'."
+msgstr "'%(category)s' enlevé de '%(page)s'."
+
+#: handlers.py:251
+#, python-format
+msgid "'%(category)s' not found in '%(page)s'."
+msgstr "'%(category)s' non trouvé dans '%(page)s'."
+
+#: handlers.py:326
+#, fuzzy, python-format
+msgid "Subsitution from '%(pat)s' to '%(repl)s'"
+msgstr "Subsitution de '%(pat)' vers '%(repl)'"
+
+#: handlers.py:329
+#, python-format
+msgid ""
+"Subsitution from '%(pat)s' to '%(repl)s' in '%(page)s' terminated with "
+"success"
+msgstr ""
+"Subsitution depuis '%(pat)s' vers '%(repl)s' dans '%(page)s' terminée avec "
+"succès"
+
+#: handlers.py:333
+#, python-format
+msgid "No occurence of '%(pat)s' found in '%(page)s'"
+msgstr "Pas d'occurence de '%(pat)s' dans '%(page)s'"
+
+#: handlers.py:358
+#, python-format
+msgid "Hyperlink(s) '%(link)s' added in '%(page)s'."
+msgstr "Hyperliens '%(link)s' ajouté dans '%(page)s'."
+
+#: handlers.py:359
+#, python-format
+msgid "No hyperlink '%(link)s' added in '%(page)s'."
+msgstr "Aucun hyperlien '%(link)s' ajouté dans '%(page)s'."
+
+#: handlers.py:395
+#, python-format
+msgid "Add hyperlink(s) for '%(link)s'"
+msgstr "Hyperlien(s) ajouté pour '%(link)s'"
+
+#: models.py:37
+msgid "Your nick on wiki"
+msgstr "Votre pseudo sur le wiki"
+
+#: models.py:38
+msgid "Your wikimedia family"
+msgstr "Votre famille de wikimedia"
+
+#: validators.py:11
+#, python-format
+msgid "Family %(family)s doesn't exist."
+msgstr "La famille %(family)s n'existe pas."
+
+#: validators.py:17
+msgid "URL must finish by '/'"
+msgstr "L'URL doit finir par '/'"
+
+#: templates/home.html:6
+msgid "No configured user."
+msgstr "Aucun utilisateur configuré."
+
+#: templates/home.html:14
+msgid "Choose"
+msgstr "Choisir"
+
+#: templates/home.html:15
+msgid "Modify"
+msgstr "Modifier"
+
+#: templates/home.html:16 templates/search-span.html:18
+#: templates/user_form.html:20 templates/action/add-category.html:6
+#: templates/action/add-hyperlink.html:7
+msgid "Add"
+msgstr "Ajouter"
+
+#: templates/index.html:15
+msgid "Home"
+msgstr "Accueil"
+
+#: templates/index.html:16 templates/action/span.html:4
+msgid "Action"
+msgstr "Action"
+
+#: templates/index.html:17
+msgid "Editor"
+msgstr "Editeur"
+
+#: templates/index.html:18
+msgid "Contributions"
+msgstr "Contributions"
+
+#: templates/result-span.html:9 templates/search-span.html:19
+#: templates/action/remove-category.html:6
+msgid "Remove"
+msgstr "Enlever"
+
+#: templates/result-span.html:10 templates/search-span.html:20
+msgid "Remove all"
+msgstr "Tout enlever"
+
+#: templates/result-span.html:11 templates/search-span.html:21
+msgid "Select all"
+msgstr "Tout sélectionner"
+
+#: templates/result-span.html:12 templates/search-span.html:23
+msgid "Get links"
+msgstr "Obtenir les liens"
+
+#: templates/search-span.html:3 templates/contrib/index.html:2
+#: templates/editor/index.html:4
+msgid "Search"
+msgstr "Rechercher"
+
+#: templates/search-span.html:5
+msgid "Articles"
+msgstr "Les articles"
+
+#: templates/search-span.html:7
+msgid "Users' pages"
+msgstr "Pages utilisateur"
+
+#: templates/search-span.html:8
+msgid "Templates"
+msgstr "Modèles"
+
+#: templates/search-span.html:9
+msgid "In content of articles"
+msgstr "Dans le contenu des articles"
+
+#: templates/search-span.html:10
+msgid "Page's references"
+msgstr "Références de page"
+
+#: templates/search-span.html:22
+msgid "Unselect all"
+msgstr "Tout désélectionner"
+
+#: templates/user_form.html:12
+msgid "Make active"
+msgstr "Rendre actif"
+
+#: templates/user_form.html:17 templates/action/delete-category.html:6
+msgid "Delete"
+msgstr "Supprimer"
+
+#: templates/user_form.html:18
+msgid "Save"
+msgstr "Sauver"
+
+#: templates/action/add-category.html:4
+msgid "Category to add"
+msgstr "Catégorie à ajouter"
+
+#: templates/action/add-category.html:5 templates/action/add-hyperlink.html:5
+#: templates/action/delete-category.html:5
+#: templates/action/move-category.html:5 templates/action/move-category.html:9
+#: templates/action/remove-category.html:5
+msgid "Check"
+msgstr "Vérifier"
+
+#: templates/action/add-hyperlink.html:4
+msgid "Expression to link"
+msgstr "Expression à lier"
+
+#: templates/action/add-hyperlink.html:6
+msgid "Link text"
+msgstr "Texte du lien"
+
+#: templates/action/delete-category.html:4
+msgid "Category to delete"
+msgstr "Catégorie à supprimer"
+
+#: templates/action/move-category.html:4
+msgid "Old category"
+msgstr "Ancienne catégorie"
+
+#: templates/action/move-category.html:8
+msgid "New category"
+msgstr "Nouvelle catégorie"
+
+#: templates/action/move-category.html:10
+msgid "Rename"
+msgstr "Renommer"
+
+#: templates/action/remove-category.html:4
+msgid "Category to remove"
+msgstr "Catégorie à enlever"
+
+#: templates/action/rename-pages.html:4 templates/action/sub.html:4
+msgid "Pattern to replace"
+msgstr "Motif à remplacer"
+
+#: templates/action/rename-pages.html:5 templates/action/sub.html:5
+msgid "Replace by"
+msgstr "Remplacer par"
+
+#: templates/action/rename-pages.html:6 templates/action/sub.html:6
+msgid "Apply"
+msgstr "Appliquer"
+
+#: templates/action/rename-pages.html:10
+msgid "Add a redirection instead of old page."
+msgstr "Ajouter une redirection à la place de l'ancienne page."
+
+#: templates/action/span.html:7
+msgid "Text substitution"
+msgstr "Substitution de texte"
+
+#: templates/action/span.html:8
+msgid "Add hyperlinks"
+msgstr "Ajouter hyperliens"
+
+#: templates/action/span.html:9
+msgid "Rename page"
+msgstr "Renommer page"
+
+#: templates/action/span.html:10
+msgid "Add category"
+msgstr "Ajouter catégorie"
+
+#: templates/action/span.html:11
+msgid "Remove category"
+msgstr "Enlever catégorie"
+
+#: templates/action/span.html:12
+msgid "Delete category"
+msgstr "Supprimer catégorie"
+
+#: templates/action/span.html:13
+msgid "Rename category"
+msgstr "Renommer catégorie"
+
+#: templates/editor/index.html:13
+msgid "Comment"
+msgstr "Commentaire"
+
+#: templates/editor/index.html:17
+msgid "Publish"
+msgstr "Publier"
+
+#: templates/editor/index.html:18
+msgid "Cancel"
+msgstr "Annuler"
+
+#: templates/editor/index.html:21
+msgid "Minor edit"
+msgstr "Edition mineure"
+
+#: templates/editor/index.html:25
+msgid "View"
+msgstr "Visualiser"
+
+#: views/actions.py:72
+msgid "Renaming in progress."
+msgstr "Renommage en cours."
+
+#: views/actions.py:92
+#, python-format
+msgid "'%(page)s' exists."
+msgstr "'%(page)s' existe."
+
+#: views/actions.py:95
+#, python-format
+msgid "'%(page)s' not found."
+msgstr "'%(page)s' non trouvé."
+
+#: views/actions.py:111
+msgid "Category adding in progress."
+msgstr "Ajout de catégorie en cours."
+
+#: views/actions.py:131
+msgid "Category moving in progress."
+msgstr "Déplacement de catégorie en cours."
+
+#: views/actions.py:135
+msgid "Category moving finished."
+msgstr "Déplacement de catégorie terminé."
+
+#: views/actions.py:150
+msgid "Category removing in progress."
+msgstr "Enlèvement de catégorie terminé."
+
+#: views/actions.py:155
+msgid "Category removing finished."
+msgstr "Enlèvement de catégorie terminé."
+
+#: views/actions.py:173
+msgid "Hyperlinks adding in progress."
+msgstr "Ajout d'hyperliens en cours."
+
+#: views/actions.py:193
+msgid "Text subsitution in progress"
+msgstr "Substitution de texte en cours."
+
+#: views/actions.py:212
+msgid "Hyperlinks"
+msgstr "Hyperliens"
+
+#: views/editor.py:33
+msgid "Publication done."
+msgstr "Publication effectuée."

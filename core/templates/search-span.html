@@ -1,12 +1,13 @@
+{% load i18n %}
 <div class="span3">
- <input type="text" id="page_q" placeholder="Rechercher"/>
+ <input type="text" id="page_q" placeholder="{% trans "Search" %}"/>
  <select id="search-type">
-  <option value="0">Les articles</option>
-  <option value="content">Dans le contenu des articles</option>
-  <option value="14">Les catégories</option>
-  <option value="category-list">Pages d'une catégorie</option>
-  <option value="2">Les pages utilisateur</option>
-  <option value="10">Les modèles</option>
+  <option value="0">{% trans "Articles" %}</option>
+  <option value="14">[% trans "Categories" %}</option>
+  <option value="2">{% trans "Users' pages" %}</option>
+  <option value="10">{% trans "Templates" %}</option>
+  <option value="content">{% trans "In content of articles" %}</option>
+  <option value="references">{% trans "Page's references" %}</option>
  </select>
 
  <select multiple size="15" id="search-pages">
@@ -14,11 +15,11 @@
 
  <select id="search-pages-action">
   <option>---</option>
-  <option value="add">Ajouter</option>
-  <option value="delete">Enlever</option>
-  <option value="delete-all">Tout enlever</option>
-  <option value="select-all">Tout sélectionner</option>
-  <option value="unselect-all">Tout désélectionner</option>
-  <option value="get-page-links">Obtenir les liens</option>
+  <option value="add">{% trans "Add" %}</option>
+  <option value="delete">{% trans "Remove" %}</option>
+  <option value="delete-all">{% trans "Remove all" %}</option>
+  <option value="select-all">{% trans "Select all" %}</option>
+  <option value="unselect-all">{% trans "Unselect all" %}</option>
+  <option value="get-page-links">{% trans "Get links" %}</option>
  </select>
 </div>

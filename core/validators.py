@@ -1,13 +1,18 @@
 from django.core.exceptions import ValidationError
-from wikipedia import Family
+from django.utils.translation import ugettext_lazy as _
+import config
+from sys import path
 
 def validate_family(value):
     try:
-        Family(value)
-    except SystemExit:
-        raise ValidationError("Family %s doesn't exist." % value)
+        path.append(config.datafilepath('families'))
+        __import__('%s_family' % value)
+    except ImportError:
+        raise ValidationError(_("Family %(family)s doesn't exist.") % {'family':value})
+    finally:
+        path.pop()
 
 def validate_url(value):
     if not value.endswith('/'):
-        raise ValidationError("URL must finish by '/'")
+        raise ValidationError(_("URL must finish by '/'"))
 

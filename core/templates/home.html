@@ -1,7 +1,9 @@
+{% load i18n %}
+
 {% if w.dbuser.id %}
- <h3>{{ w.nick }} sur <a href="{{ w.site.siteinfo.base }}">{{ w.site.siteinfo.sitename }}</a></h3>
+ <h3>{{ w.nick }} - <a href="{{ w.site.siteinfo.base }}">{{ w.site.siteinfo.sitename }}</a></h3>
 {% else %}
- <h3>Aucun utilisateur configuré</h3>
+<h3>{% trans "No configured user." %}</h3>
 {% endif %}
 
 <div class="span5">
@@ -9,9 +11,9 @@
   {% include 'user_list.html' %}
  </ul>
  <div class="btn-group">
-  <button class="btn btn-primary" id="btn-choose-wikiuser">Choisir</button>
-  <button class="btn" id="btn-get-wikiuser">Modifier</button>
-  <button class="btn" id="btn-get-form-wikiuser">Ajouter</button>
+  <button class="btn btn-primary" id="btn-choose-wikiuser">{% trans "Choose" %}</button>
+  <button class="btn" id="btn-get-wikiuser">{% trans "Modify" %}</button>
+  <button class="btn" id="btn-get-form-wikiuser">{% trans "Add" %}</button>
  </div>
  <hr>
  <div id="user-messages">

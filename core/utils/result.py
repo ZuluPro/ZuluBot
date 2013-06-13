@@ -44,7 +44,7 @@ class Task_Result(dict):
 
     def make_messages(self, request, header=''):
         """
-        Create messages from result and return them.
+        Create messages from results and return them.
         """
         # Set dict of string which will contain HTML
         for status in self.TAGS:
