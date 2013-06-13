@@ -1,7 +1,10 @@
 {% load i18n %}
 <div class="row">
  <div class="span12">
-  <input id="editor_q" class="input span9" type="text" placeholder="{% trans "Search" %}">
+  <div class="input-append">
+   <input id="editor_q" class="input span8" type="text" placeholder="{% trans "Page name" %}">
+   <button id="btn-search-editor" type="button" class="btn">{% trans "Search" %}</button>
+  </div>
  </div>
 </div>
 
@@ -9,7 +12,7 @@
  <div class="span9">
   <input id="editor-page" type="hidden" value="">
   {% include "editor/toolbar.html" %}
-  <textarea id="editor-text" class="span9" rows="20"></textarea>
+  <textarea id="editor-text" class="span9 editor" rows="20"></textarea>
   <input id="editor-comment" class="input span9" type="text" placeholder="{% trans "Comment" %}">
 
   <div class="btn-toolbar">

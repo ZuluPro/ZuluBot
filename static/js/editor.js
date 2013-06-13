@@ -1,9 +1,78 @@
-$(document).on('click', '#btn-editor-bold', function() {
-  $('#editor-text').replaceAtCaret('text','bold');
+// GET PAGE
+$(document).on('click', '#btn-search-editor', function() {
+    if ( $('#editor_q').val().length ) {
+      print_loading_gif('#editor-messages',50,50);
+	  var page = $('#editor_q').val()
+      $.ajax({url:'/get_page_text', async:true,
+          data:{q:page},
+          success: function(data, status, xhr) {
+              $('#editor-page').val(page);
+              $('#editor-text').val(data);
+	  		if (data == '') {
+	  		  print_message('Page vide.','warning','#editor-messages')
+	  		}
+          },
+          complete: function(data, status, xhr) {
+            remove_loading_gif('#editor-messages');
+          },
+      });
+    }
+});
+// GET PAGE BY PRESS ENTER
+$(document).on('keypress', '#editor_q', function(e) {
+  if (e.which == 13) {
+    $('#btn-search-editor').click();
+  }
+});
+
+// PUT PAGE FOR EDITOR 
+$(document).on('click', '#btn-publish-editor', function() {
+  print_loading_gif('#editor-messages',50,50);
+  $.ajax({type:'POST', url:'/put_page_text', async:true,
+    data:{
+	  page:$('#editor-page').val(),
+      text:$('#editor-text').val(),
+      comment:$('#editor-comment').val(),
+      //minor:$('#editor-comment').val()
+      csrfmiddlewaretoken:csrf
+	},
+    success: function(data, status, xhr) {
+      $('#editor-messages').prepend(data);
+	},
+    complete: function(data, status, xhr) {
+      remove_loading_gif('#editor-messages');
+    },
+  });
+});
+
+// CANCEL PAGE EDITION
+$(document).on('click', '#btn-reinit-editor', function() {
+  var page = $('#editor-page').val();
+  $('#editor_q').val(page);
+  $('#btn-search-editor').click();
+});
+
+// INSERT NEAR
+$(document).on('click', '.insert-near', function() {
+  var type = $(this).attr('id').slice(11);
+  $('#editor-text').replaceAtCaret('text',type);
 })
 
+// INSERT AN EMPTY UNORDERED LIST
+$(document).on('click', '#btn-editor-list', function() {
+  $('#editor-text').insertAtCaret('*\n*\n');
+})
 
-jQuery.fn.extend({
+// CLASS GOTO EDITOR AND GET PAGE
+$(document).on('click', '.goto-editor', function() {
+  var page = $(this).attr('page');
+  $('#tab-editor').click();
+  $('#editor_q').val(page);
+  $('#btn-search-editor').click();
+})
+
+// FUNC FOR INSERT AT SELECTION
+$.fn.extend({
 insertAtCaret: function(myValue){
   return this.each(function(i) {
     if (document.selection) {
@@ -59,6 +128,10 @@ replaceAtCaret: function(myValue,myType){
 	  case 'linkEx':
         var insertBefore = "[http:// ";
         var insertAfter = " ]";
+      break;
+	  case 'title':
+        var insertBefore = "=";
+        var insertAfter = "=";
       break;
       default:
         var insertBefore = "[[";

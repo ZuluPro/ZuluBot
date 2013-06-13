@@ -12,10 +12,10 @@ var csrf = "{{ csrf_token }}";
  <div class="well center span12">
 
   <ul class="nav nav-pills">
-   <li class="active"><a href="#home" data-toggle="tab">{% trans "Home" %}</a></li>
-   <li><a href="#action" data-toggle="tab">{% trans "Action" %}</a></li>
-   <li><a href="#editor" data-toggle="tab">{% trans "Editor" %}</a></li>
-   <li><a href="#contrib" data-toggle="tab">{% trans "Contributions" %}</a></li>
+   <li class="active"><a id="tab-home" href="#home" data-toggle="tab">{% trans "Home" %}</a></li>
+   <li><a id="tab-action" href="#action" data-toggle="tab">{% trans "Action" %}</a></li>
+   <li><a id="tab-editor" href="#editor" data-toggle="tab">{% trans "Editor" %}</a></li>
+   <li><a id="tab-contrib" href="#contrib" data-toggle="tab">{% trans "Contributions" %}</a></li>
   </ul>
 
  <div class="tab-content">

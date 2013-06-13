@@ -252,7 +252,6 @@ $(document).on('click', '#btn-sub', function() {
   }
 });
 
-
 // INFINITE LOOP FOR ASYNC TASKS
 if ( CELERY_IS_ACTIVE ) {
     window.onload = function start() {
@@ -286,46 +285,6 @@ $(document).on('keypress', '#contrib_q', function(e) {
     }
 });
 
-// SEARCH PAGE FOR EDITOR 
-$(document).on('keypress', '#editor_q', function(e) {
-    if (e.which == 13 && $(this).val().length ) {
-      print_loading_gif('#editor-messages',50,50);
-	  var page = $(this).val()
-      $.ajax({url:'/get_page_text', async:true,
-          data:{q:page},
-          success: function(data, status, xhr) {
-              $('#editor-page').val(page);
-              $('#editor-text').val(data);
-	  		if (data == '') {
-	  		  print_message('Page vide.','warning','#editor-messages')
-	  		}
-          },
-          complete: function(data, status, xhr) {
-            remove_loading_gif('#editor-messages');
-          },
-      });
-    }
-});
-
-// PUT PAGE FOR EDITOR 
-$(document).on('click', '#btn-publish-editor', function() {
-  print_loading_gif('#editor-messages',50,50);
-  $.ajax({type:'POST', url:'/put_page_text', async:true,
-    data:{
-	  page:$('#editor-page').val(),
-      text:$('#editor-text').val(),
-      comment:$('#editor-comment').val(),
-      //minor:$('#editor-comment').val()
-      csrfmiddlewaretoken:csrf
-	},
-    success: function(data, status, xhr) {
-      $('#editor-messages').prepend(data);
-	},
-    complete: function(data, status, xhr) {
-      remove_loading_gif('#editor-messages');
-    },
-  });
-});
 
 // GET REGISTERED USER FORM
 $(document).on('click', '#btn-get-wikiuser', function() {
@@ -336,7 +295,7 @@ $(document).on('click', '#btn-get-wikiuser', function() {
 	}
   });
 });
-//
+
 // GET NOT REGISTERED USER FORM
 $(document).on('click', '#btn-get-form-wikiuser', function() {
   $.ajax({type:'GET', url:'/get_user', async:true,
